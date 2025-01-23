@@ -1,0 +1,9 @@
+Privacy Policy for YouTube Uploader
+Effective Date: January 24, 2025
+
+YouTube Uploader does not collect, store, or share any personal data or information from its users.
+
+The app is designed solely to upload videos to YouTube using the YouTube API. Any data processed during video uploads is handled directly by YouTube, governed by their Privacy Policy.
+
+If you have any questions or concerns, please contact us at:
+Email: devananshdubey@gmail.com
