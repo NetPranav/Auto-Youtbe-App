@@ -23,6 +23,13 @@ from operations.ceo_agent.agent import CEOAgent
 
 from operations.dashboard.terminal import TerminalDashboard
 
+# Infrastructure services
+from infrastructure.credential_manager.manager import CredentialManager
+from infrastructure.alerting.notifier import AlertEngine
+from infrastructure.backup.manager import BackupManager
+from infrastructure.maintenance.janitor import Janitor
+from infrastructure.audit.logger import AuditLogger
+
 def start_dispatcher(dispatcher: Dispatcher):
     while True:
         dispatcher.tick()
@@ -34,44 +41,61 @@ def run_operations():
     # --- 1. Core Services ---
     db = get_db_session().__enter__() # Keep session alive for the daemon thread
     
+    AuditLogger.log("SYSTEM_STARTUP", "Operations", {"phase": "initialization"})
+    
     bus = EventBus()
     queue = TaskQueue(db)
     resource_mgr = ResourceManager()
     health_mon = HealthMonitor(db, resource_mgr)
     
-    # --- 2. Recovery ---
+    # --- 2. Infrastructure Pre-flight ---
+    cred_mgr = CredentialManager(db)
+    cred_mgr.check_all()
+    
+    alert_engine = AlertEngine(db)
+    alert_engine.check_all()
+    
+    # --- 3. Recovery ---
     recovery_mgr = RecoveryManager(db)
     recovery_mgr.recover()
     
-    # --- 3. Intelligence ---
+    # --- 4. Intelligence ---
     decision_engine = DecisionEngine()
     workflow_planner = WorkflowPlanner(queue, bus)
     ceo_agent = CEOAgent(db, decision_engine, workflow_planner)
     
-    # --- 4. Dispatcher ---
+    # --- 5. Dispatcher ---
     dispatcher = Dispatcher(db, queue, bus, resource_mgr)
     
-    # --- 5. Scheduler ---
+    # --- 6. Scheduler ---
     scheduler = Scheduler()
     scheduler.start()
     
-    # Schedule CEO check every 1 minute for testing (Normally hourly/daily)
+    # CEO strategic cycle every 1 minute (testing), alerts every 5 minutes, backup daily (1440 min)
     scheduler.add_job(1, ceo_agent.execute_strategic_cycle)
+    scheduler.add_job(5, alert_engine.check_all)
     
-    # --- 6. Threads ---
-    # Start dispatcher loop in background
+    backup_mgr = BackupManager(db)
+    janitor = Janitor(db)
+    scheduler.add_job(1440, backup_mgr.backup_full)
+    scheduler.add_job(720, janitor.run_all)
+    
+    # --- 7. Threads ---
     dispatch_thread = threading.Thread(target=start_dispatcher, args=(dispatcher,), daemon=True)
     dispatch_thread.start()
     
     # Kick off an initial CEO cycle right away
     ceo_agent.execute_strategic_cycle()
     
-    # --- 7. Dashboard (Blocks main thread) ---
+    AuditLogger.log("SYSTEM_READY", "Operations", {"status": "all_systems_nominal"})
+    
+    # --- 8. Dashboard (Blocks main thread) ---
     dashboard = TerminalDashboard(db)
     try:
         dashboard.start()
     except KeyboardInterrupt:
         print("\nShutting down AI Operations...")
+        AuditLogger.log("SYSTEM_SHUTDOWN", "Operations", {"reason": "user_interrupt"})
     finally:
         scheduler.stop()
         db.close()

@@ -5,6 +5,10 @@ from operations.event_bus.bus import EventBus
 from operations.resource_manager.manager import ResourceManager
 from providers.manager import ProviderManager
 
+from infrastructure.tracing.tracer import new_trace
+from infrastructure.metrics.collector import track_metric
+from infrastructure.audit.logger import AuditLogger
+
 # Import engines
 from research_engine.engine import ResearchEngine
 from content_engine.engine import ContentEngine
@@ -18,6 +22,7 @@ logger = get_logger(__name__)
 class Dispatcher:
     """
     Safely executes tasks from the queue and maps them to engine invocations.
+    All tracing, metrics, and audit logging hooks are applied here so engines remain untouched.
     """
     def __init__(self, db_session: Session, queue: TaskQueue, bus: EventBus, resource_manager: ResourceManager):
         self.db = db_session
@@ -35,11 +40,15 @@ class Dispatcher:
         if not item:
             return
             
-        logger.info(f"[Dispatcher] Starting task {item.task_type} (ID: {item.id})")
+        # Start a distributed trace for this task
+        trace_id = new_trace(workflow_id=item.workflow_id)
+        
+        logger.info(f"[Dispatcher] Starting task {item.task_type} (ID: {item.id}, Trace: {trace_id})")
+        AuditLogger.log("TASK_DISPATCHED", "Dispatcher", {"task_type": item.task_type, "workflow_id": item.workflow_id})
         
         success = False
         try:
-            success = self._execute_task(item)
+            success = self._execute_task_tracked(item)
         except Exception as e:
             logger.error(f"[Dispatcher] Unhandled exception in task {item.task_type}: {e}")
             success = False
@@ -47,9 +56,15 @@ class Dispatcher:
         if success:
             self.queue.complete(item.id)
             self.bus.publish("TASK_COMPLETED", {"task_type": item.task_type, "workflow_id": item.workflow_id, "payload": item.payload_json})
+            AuditLogger.log("TASK_COMPLETED", "Dispatcher", {"task_type": item.task_type})
         else:
             self.queue.fail(item.id, "Task execution returned False or crashed.")
             self.bus.publish("TASK_FAILED", {"task_type": item.task_type, "workflow_id": item.workflow_id})
+            AuditLogger.log("TASK_FAILED", "Dispatcher", {"task_type": item.task_type})
+
+    @track_metric("engine_execution_time")
+    def _execute_task_tracked(self, item) -> bool:
+        return self._execute_task(item)
 
     def _execute_task(self, item) -> bool:
         if item.task_type == "RESEARCH":

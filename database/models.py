@@ -469,4 +469,61 @@ class AssetValidation(Base):
     
     asset = relationship("Asset", back_populates="validation")
 
+# --- Infrastructure Models ---
+
+class BackupRecord(Base):
+    __tablename__ = 'backup_records'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    backup_type = Column(String(50), nullable=False) # FULL, DATABASE, CONFIG, KNOWLEDGE
+    file_path = Column(String(1000), nullable=False)
+    file_size_bytes = Column(Integer, nullable=True)
+    status = Column(String(20), default="COMPLETED") # COMPLETED, FAILED
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class RestoreRecord(Base):
+    __tablename__ = 'restore_records'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    backup_id = Column(String(36), ForeignKey('backup_records.id'))
+    status = Column(String(20), default="COMPLETED")
+    restored_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    backup = relationship("BackupRecord")
+
+class CredentialStatus(Base):
+    __tablename__ = 'credential_statuses'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    provider_name = Column(String(100), nullable=False)
+    is_valid = Column(Boolean, default=True)
+    last_checked_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    error_message = Column(Text, nullable=True)
+
+class Alert(Base):
+    __tablename__ = 'alerts'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    alert_type = Column(String(50), nullable=False) # DISK_FULL, PROVIDER_DOWN, QUEUE_GROWTH
+    severity = Column(String(20), default="WARNING") # INFO, WARNING, CRITICAL
+    message = Column(Text, nullable=False)
+    is_acknowledged = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class MaintenanceTask(Base):
+    __tablename__ = 'maintenance_tasks'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    task_type = Column(String(50), nullable=False) # LOG_CLEANUP, ASSET_CLEANUP, DB_OPTIMIZE
+    status = Column(String(20), default="COMPLETED")
+    items_processed = Column(Integer, default=0)
+    executed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class DiagnosticReport(Base):
+    __tablename__ = 'diagnostic_reports'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    report_type = Column(String(50), nullable=False) # SYSTEM, PROVIDER, DATABASE, PERFORMANCE
+    findings_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
