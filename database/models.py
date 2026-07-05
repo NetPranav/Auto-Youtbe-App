@@ -330,6 +330,52 @@ class Notification(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_delivered = Column(Boolean, default=False)
 
+# --- Learning Intelligence Engine Models ---
+
+class AnalyticsSnapshot(Base):
+    __tablename__ = 'analytics_snapshots'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    views = Column(Integer, default=0)
+    ctr_percent = Column(Float, default=0.0)
+    avg_view_duration_sec = Column(Float, default=0.0)
+    retention_graph_json = Column(JSON, nullable=True)
+    
+    published_video = relationship("PublishedVideo")
+
+class PerformanceReport(Base):
+    __tablename__ = 'performance_reports'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    overall_score = Column(Float, nullable=True) # 0-100
+    findings_json = Column(JSON, nullable=True)
+    
+    published_video = relationship("PublishedVideo")
+
+class StrategyRecommendation(Base):
+    __tablename__ = 'strategy_recommendations'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    report_id = Column(String(36), ForeignKey('performance_reports.id'))
+    target_engine = Column(String(50)) # e.g. 'RESEARCH', 'CONTENT', 'ASSET'
+    recommendation_text = Column(Text, nullable=False)
+    is_applied = Column(Boolean, default=False)
+    
+    report = relationship("PerformanceReport")
+
+class KnowledgeEntry(Base):
+    __tablename__ = 'knowledge_entries'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    category = Column(String(50), nullable=False) # HOOK_STYLE, THUMBNAIL_COLOR
+    insight = Column(Text, nullable=False)
+    confidence = Column(Float, default=0.5)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
 class Asset(Base):
     __tablename__ = 'assets'
     
