@@ -10,6 +10,8 @@ from research_engine.engine import ResearchEngine
 from content_engine.engine import ContentEngine
 from asset_engine.engine import AssetEngine
 from video_engine.engine import VideoEngine
+from publisher.engine import PublishingEngine
+from providers.manager import ProviderManager
 from database.session import get_db_session
 from database.models import ContentPackage
 
@@ -75,8 +77,31 @@ def run_pipeline():
             
         final_video_path = video_engine.run(asset_package_id)
         
-        logger.info("=== PIPELINE COMPLETED SUCCESSFULLY ===")
         logger.info(f"Final Video path: {final_video_path}")
+        
+        if not final_video_path:
+            logger.error("Video engine failed. Aborting pipeline.")
+            return False
+            
+        # Phase 6: Publishing Engine
+        logger.info("Phase 6: Publishing & Distribution Engine")
+        
+        # Publisher engine requires provider manager for AI Metadata generation
+        provider_manager = ProviderManager()
+        publisher_engine = PublishingEngine(db, provider_manager)
+        
+        # We need the VideoProject ID. We can derive it by querying the latest VideoProject for this asset package.
+        from database.models import VideoProject
+        video_project = db.query(VideoProject).filter(VideoProject.asset_package_id == asset_package_id).order_by(VideoProject.created_at.desc()).first()
+        
+        if not video_project:
+            logger.error("Could not find VideoProject in DB.")
+            return False
+            
+        published_url = publisher_engine.run(video_project.id)
+        
+        logger.info("=== FULL YOUTUBE AUTOMATION PIPELINE COMPLETED SUCCESSFULLY ===")
+        logger.info(f"Published URL: {published_url}")
     return True
 
 if __name__ == "__main__":

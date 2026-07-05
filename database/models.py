@@ -256,6 +256,80 @@ class RenderStatistics(Base):
     
     result = relationship("RenderResult", back_populates="statistics")
 
+# --- Publishing Engine Models ---
+
+class PublishedVideo(Base):
+    __tablename__ = 'published_videos'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    project_id = Column(String(36), ForeignKey('video_projects.id'))
+    platform = Column(String(50), default="YOUTUBE")
+    status = Column(String(50), default="PREPARING") # PREPARING, UPLOADING, PUBLISHED, FAILED
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    project = relationship("VideoProject")
+    attempts = relationship("UploadAttempt", back_populates="published_video", cascade="all, delete-orphan")
+    metadata_info = relationship("PlatformMetadata", back_populates="published_video", uselist=False, cascade="all, delete-orphan")
+    schedule = relationship("PublishingSchedule", back_populates="published_video", uselist=False, cascade="all, delete-orphan")
+    result = relationship("PublishingResult", back_populates="published_video", uselist=False, cascade="all, delete-orphan")
+
+class UploadAttempt(Base):
+    __tablename__ = 'upload_attempts'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    attempt_number = Column(Integer, default=1)
+    status = Column(String(50), default="IN_PROGRESS") # IN_PROGRESS, SUCCESS, FAILED
+    started_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    ended_at = Column(DateTime, nullable=True)
+    error_message = Column(Text, nullable=True)
+    
+    published_video = relationship("PublishedVideo", back_populates="attempts")
+
+class PlatformMetadata(Base):
+    __tablename__ = 'platform_metadata'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    title = Column(String(100), nullable=False)
+    description = Column(Text, nullable=False)
+    tags_json = Column(JSON, nullable=True)
+    category_id = Column(String(20), nullable=True)
+    visibility = Column(String(20), default="private")
+    
+    published_video = relationship("PublishedVideo", back_populates="metadata_info")
+
+class PublishingSchedule(Base):
+    __tablename__ = 'publishing_schedules'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    scheduled_for = Column(DateTime, nullable=False)
+    is_published = Column(Boolean, default=False)
+    
+    published_video = relationship("PublishedVideo", back_populates="schedule")
+
+class PublishingResult(Base):
+    __tablename__ = 'publishing_results'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    published_video_id = Column(String(36), ForeignKey('published_videos.id'))
+    platform_video_id = Column(String(100), nullable=False) # e.g. YouTube Video ID
+    platform_url = Column(String(500), nullable=False)
+    thumbnail_url = Column(String(500), nullable=True)
+    
+    published_video = relationship("PublishedVideo", back_populates="result")
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    event_type = Column(String(50), nullable=False) # UPLOAD_SUCCESS, UPLOAD_FAILED
+    message = Column(Text, nullable=False)
+    level = Column(String(20), default="INFO")
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    is_delivered = Column(Boolean, default=False)
+
 class Asset(Base):
     __tablename__ = 'assets'
     

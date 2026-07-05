@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     video_hardware_encoding: str = Field(default="none", env="VIDEO_HARDWARE_ENCODING") # none, nvenc, qsv, videotoolbox
     video_motion_intensity: float = Field(default=1.0, env="VIDEO_MOTION_INTENSITY")
     
+    # Publishing Engine Defaults
+    youtube_client_secret_path: str = Field(default="client_secret.json", env="YOUTUBE_CLIENT_SECRET_PATH")
+    youtube_default_visibility: str = Field(default="private", env="YOUTUBE_DEFAULT_VISIBILITY")
+    youtube_default_category_id: str = Field(default="28", description="Science & Technology", env="YOUTUBE_DEFAULT_CATEGORY_ID")
+    publishing_max_retries: int = Field(default=3, env="PUBLISHING_MAX_RETRIES")
+    publishing_chunk_size_mb: int = Field(default=5, env="PUBLISHING_CHUNK_SIZE_MB")
+    
     # Providers Default Settings
     image_provider: str = Field(default="nim", description="Provider for image generation (e.g. nim, dall-e)")
     voice_provider: str = Field(default="edge_tts", description="Provider for voice generation (e.g. edge_tts, elevenlabs)")
