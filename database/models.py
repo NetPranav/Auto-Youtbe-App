@@ -376,6 +376,48 @@ class KnowledgeEntry(Base):
     confidence = Column(Float, default=0.5)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+# --- Operations Platform Models ---
+
+class QueueItem(Base):
+    __tablename__ = 'queue_items'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    workflow_id = Column(String(36), nullable=False)
+    task_type = Column(String(50), nullable=False) # RESEARCH, CONTENT, ASSET, VIDEO, PUBLISH, LEARN
+    payload_json = Column(JSON, nullable=True)
+    status = Column(String(20), default="PENDING") # PENDING, IN_PROGRESS, COMPLETED, FAILED
+    priority = Column(Integer, default=50) # Higher is more important
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+    retries = Column(Integer, default=0)
+    error_message = Column(Text, nullable=True)
+
+class Event(Base):
+    __tablename__ = 'events'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    event_type = Column(String(50), nullable=False) # TASK_COMPLETED, TASK_FAILED, CEO_DECISION
+    payload_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+class OperationDecision(Base):
+    __tablename__ = 'operation_decisions'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    decision_type = Column(String(50), nullable=False) # GENERATE_VIDEO, PAUSE, REGENERATE
+    justification = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class RecoveryCheckpoint(Base):
+    __tablename__ = 'recovery_checkpoints'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    workflow_id = Column(String(36), nullable=False)
+    last_successful_task = Column(String(50), nullable=False)
+    state_json = Column(JSON, nullable=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
 class Asset(Base):
     __tablename__ = 'assets'
     
