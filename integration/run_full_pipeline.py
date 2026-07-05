@@ -6,9 +6,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from common import logger
 from database.database import init_db
-from research_engine import ResearchEngine
-from content_engine import ContentEngine
-from asset_engine import AssetEngine
+from research_engine.engine import ResearchEngine
+from content_engine.engine import ContentEngine
+from asset_engine.engine import AssetEngine
+from video_engine.engine import VideoEngine
+from database.session import get_db_session
+from database.models import ContentPackage
 
 def run_pipeline():
     logger.info("=== STARTING FULL E2E PIPELINE ===")
@@ -46,9 +49,6 @@ def run_pipeline():
     logger.info("Phase 3: Asset Engine")
     asset_engine = AssetEngine()
     
-    from database.session import get_db_session
-    from database.models import ContentPackage
-    
     with get_db_session() as db:
         c_pkg = db.query(ContentPackage).filter(ContentPackage.topic_id == topic['topic_id']).order_by(ContentPackage.created_at.desc()).first()
         if not c_pkg:
@@ -56,15 +56,27 @@ def run_pipeline():
             return False
         content_pkg_id = c_pkg.id
         
-    asset_pkg = asset_engine.run(content_pkg_id)
-    
-    if not asset_pkg:
-        logger.error("Asset Engine failed to produce an asset package. Aborting pipeline.")
-        return False
+        asset_result = asset_engine.run(content_pkg_id)
         
-    logger.info(f"Asset Engine successfully generated Asset Package for Content Package ID: {asset_pkg.content_package_id}")
-    logger.info(f"Generated {len(asset_pkg.assets)} assets.")
-    logger.info("=== PIPELINE COMPLETED SUCCESSFULLY ===")
+        if not asset_result:
+            logger.error("Asset Engine failed to produce an asset package. Aborting pipeline.")
+            return False
+            
+        logger.info(f"Asset Engine successfully generated Asset Package for Content Package ID: {content_pkg_id}")
+        
+        # Phase 5: Video Engine
+        logger.info("Phase 5: Video Engine")
+        video_engine = VideoEngine(db)
+        
+        asset_package_id = asset_result.id
+        if not asset_package_id:
+            logger.error("Failed to get asset package id from result.")
+            return False
+            
+        final_video_path = video_engine.run(asset_package_id)
+        
+        logger.info("=== PIPELINE COMPLETED SUCCESSFULLY ===")
+        logger.info(f"Final Video path: {final_video_path}")
     return True
 
 if __name__ == "__main__":

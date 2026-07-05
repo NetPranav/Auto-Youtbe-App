@@ -168,6 +168,94 @@ class ProviderStatistic(Base):
     estimated_cost = Column(Float, nullable=True)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+class VideoProject(Base):
+    __tablename__ = 'video_projects'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    asset_package_id = Column(String(36), ForeignKey('asset_packages.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    status = Column(String(50), default="BUILDING_TIMELINE") # BUILDING_TIMELINE, RENDERING, COMPLETED, FAILED
+    
+    asset_package = relationship("AssetPackage")
+    timelines = relationship("Timeline", back_populates="project", cascade="all, delete-orphan")
+    render_jobs = relationship("RenderJob", back_populates="project", cascade="all, delete-orphan")
+
+class Timeline(Base):
+    __tablename__ = 'timelines'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    project_id = Column(String(36), ForeignKey('video_projects.id'))
+    version = Column(Integer, default=1)
+    total_duration_sec = Column(Float, default=0.0)
+    timeline_json = Column(JSON, nullable=True) # Full structured representation for exporter
+    
+    project = relationship("VideoProject", back_populates="timelines")
+    clips = relationship("TimelineClip", back_populates="timeline", cascade="all, delete-orphan")
+
+class TimelineClip(Base):
+    __tablename__ = 'timeline_clips'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    timeline_id = Column(String(36), ForeignKey('timelines.id'))
+    scene_id = Column(String(36), ForeignKey('scenes.id'), nullable=True)
+    asset_id = Column(String(36), ForeignKey('assets.id'), nullable=True)
+    start_time = Column(Float, nullable=False)
+    end_time = Column(Float, nullable=False)
+    layer = Column(Integer, default=0) # Z-index layer
+    clip_type = Column(String(50), nullable=False) # VISUAL, AUDIO, SUBTITLE, EFFECT
+    properties_json = Column(JSON, nullable=True) # Motion, transitions, styling attached to clip
+    
+    timeline = relationship("Timeline", back_populates="clips")
+
+class RenderJob(Base):
+    __tablename__ = 'render_jobs'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    project_id = Column(String(36), ForeignKey('video_projects.id'))
+    timeline_id = Column(String(36), ForeignKey('timelines.id'))
+    status = Column(String(50), default="QUEUED") # QUEUED, PROCESSING, SUCCESS, FAILED
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+    error_message = Column(Text, nullable=True)
+    
+    project = relationship("VideoProject", back_populates="render_jobs")
+    result = relationship("RenderResult", back_populates="job", uselist=False, cascade="all, delete-orphan")
+
+class RenderResult(Base):
+    __tablename__ = 'render_results'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    job_id = Column(String(36), ForeignKey('render_jobs.id'))
+    output_path = Column(String(1000), nullable=False)
+    file_size_bytes = Column(Integer, nullable=True)
+    
+    job = relationship("RenderJob", back_populates="result")
+    metadata_info = relationship("VideoMetadata", back_populates="result", uselist=False, cascade="all, delete-orphan")
+    statistics = relationship("RenderStatistics", back_populates="result", uselist=False, cascade="all, delete-orphan")
+
+class VideoMetadata(Base):
+    __tablename__ = 'video_metadata'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    result_id = Column(String(36), ForeignKey('render_results.id'))
+    resolution = Column(String(20), nullable=False)
+    fps = Column(Integer, nullable=False)
+    codec = Column(String(50), nullable=False)
+    bitrate = Column(String(50), nullable=False)
+    
+    result = relationship("RenderResult", back_populates="metadata_info")
+
+class RenderStatistics(Base):
+    __tablename__ = 'render_statistics'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    result_id = Column(String(36), ForeignKey('render_results.id'))
+    render_time_sec = Column(Float, nullable=False)
+    frames_rendered = Column(Integer, nullable=True)
+    hardware_accelerated = Column(Boolean, default=False)
+    
+    result = relationship("RenderResult", back_populates="statistics")
+
 class Asset(Base):
     __tablename__ = 'assets'
     

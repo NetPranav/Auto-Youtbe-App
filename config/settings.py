@@ -42,7 +42,13 @@ class Settings(BaseSettings):
     
     # Asset Engine Settings
     asset_storage_dir: str = Field(default="assets", description="Directory to store generated assets")
-    asset_video_resolution: str = Field(default="1920x1080", description="Target resolution for generated video")
+    # Video Generation Defaults
+    asset_video_resolution: str = Field(default="1080x1920", description="Target resolution for generated video")
+    video_fps: int = Field(default=30, env="VIDEO_FPS")
+    video_bitrate: str = Field(default="5M", env="VIDEO_BITRATE")
+    video_codec: str = Field(default="libx264", env="VIDEO_CODEC")
+    video_hardware_encoding: str = Field(default="none", env="VIDEO_HARDWARE_ENCODING") # none, nvenc, qsv, videotoolbox
+    video_motion_intensity: float = Field(default=1.0, env="VIDEO_MOTION_INTENSITY")
     
     # Providers Default Settings
     image_provider: str = Field(default="nim", description="Provider for image generation (e.g. nim, dall-e)")
