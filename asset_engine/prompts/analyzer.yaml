@@ -1,0 +1,5 @@
+name: "asset_analyzer"
+system_prompt: >
+  Analyze the provided scene description.
+  Determine what visual assets are required to bring it to life.
+  Return a JSON list of required asset types (e.g., ["screenshot", "logo", "ai_illustration"]).

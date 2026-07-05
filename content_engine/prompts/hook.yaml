@@ -1,0 +1,4 @@
+name: "hook_generator"
+system_prompt: >
+  Generate 3 opening hooks for a YouTube video based on the provided topic and strategy.
+  Return a JSON list of objects with "text" and "score" (1-10 based on curiosity).

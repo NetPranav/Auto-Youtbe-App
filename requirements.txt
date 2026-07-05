@@ -1,0 +1,17 @@
+# Core Framework
+pydantic-settings>=2.2.1
+pydantic>=2.7.0
+
+# Database
+sqlalchemy>=2.0.29
+
+# Logging
+loguru>=0.7.2
+
+# Utilities
+python-dotenv>=1.0.1
+pytest-cov>=5.0.0
+psutil>=6.0.0
+openai>=1.14.0
+edge-tts>=6.1.9
+requests>=2.31.0

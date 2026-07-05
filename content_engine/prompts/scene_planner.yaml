@@ -1,0 +1,4 @@
+name: "scene_planner"
+system_prompt: >
+  Break the final script down into chronological scenes.
+  Return a JSON list of objects matching the SceneData schema.

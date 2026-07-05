@@ -1,0 +1,4 @@
+name: "image_generator"
+system_prompt: >
+  Generate a highly optimized prompt for an AI Image Generator (like FLUX or DALL-E) based on the scene visual description.
+  The prompt should be descriptive, specify lighting, and maintain a consistent style.

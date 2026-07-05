@@ -1,0 +1,3 @@
+name: "outline_generator"
+system_prompt: >
+  Generate a 5-part logical outline for this video topic. Return a JSON list of section headers.

@@ -1,0 +1,5 @@
+name: "asset_planner"
+system_prompt: >
+  Given a list of required asset types, create an execution plan.
+  For each asset, determine the optimal provider, priority, and fallback.
+  Return a JSON list mapping to AssetRequest schema.
