@@ -78,3 +78,31 @@ class ProviderManager:
                 from asset_engine.providers.mock import MockAssetFetcher
                 self._stock_provider = MockAssetFetcher()
         return self._stock_provider
+
+    def get_provider(self, provider_type: str):
+        """Generic accessor for engines."""
+        if provider_type == "content":
+            return self.get_llm_provider()
+        elif provider_type == "image":
+            return self.get_image_provider()
+        elif provider_type == "voice":
+            return self.get_voice_provider()
+        elif provider_type == "stock":
+            return self.get_stock_provider()
+        raise ValueError(f"Unknown provider type: {provider_type}")
+        
+    def collaborative_generate(self, prompt: str, task_context: str, db_session, agent_count: int = 3) -> str:
+        """
+        Seamless integration point for engines.
+        Routes the generation request through the multi-agent AI Editorial Board.
+        """
+        try:
+            # We import locally to avoid circular dependencies at startup
+            from multi_agent.pipeline import MultiAgentPipeline
+            pipeline = MultiAgentPipeline(db_session, self)
+            return pipeline.run_collaborative(prompt, task_context, agent_count)
+        except Exception as e:
+            logger.error(f"[ProviderManager] Collaborative generation failed: {e}. Falling back to single-model generation.")
+            provider = self.get_llm_provider()
+            return provider.generate_text(prompt, max_tokens=2500)
+

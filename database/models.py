@@ -527,3 +527,83 @@ class DiagnosticReport(Base):
     findings_json = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+# --- Multi-Agent Intelligence Models ---
+
+class AgentProfile(Base):
+    __tablename__ = 'agent_profiles'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    name = Column(String(100), nullable=False)
+    expertise = Column(String(200), nullable=False)
+    model_id = Column(String(200), nullable=True) # e.g. deepseek-ai/deepseek-v4-pro
+    personality_prefix = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class AgentRun(Base):
+    __tablename__ = 'agent_runs'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    agent_id = Column(String(36), ForeignKey('agent_profiles.id'))
+    task_context = Column(String(100), nullable=False) # e.g. SCRIPT_GENERATION
+    prompt_used = Column(Text, nullable=False)
+    output_text = Column(Text, nullable=True)
+    duration_sec = Column(Float, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    agent = relationship("AgentProfile")
+
+class PeerReview(Base):
+    __tablename__ = 'peer_reviews'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    reviewer_agent_id = Column(String(36), ForeignKey('agent_profiles.id'))
+    reviewed_run_id = Column(String(36), ForeignKey('agent_runs.id'))
+    feedback_json = Column(JSON, nullable=True) # {"strengths": [], "weaknesses": [], "score": 7}
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    reviewer = relationship("AgentProfile")
+    reviewed_run = relationship("AgentRun")
+
+class DebateRound(Base):
+    __tablename__ = 'debate_rounds'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    round_number = Column(Integer, default=1)
+    agent_id = Column(String(36), ForeignKey('agent_profiles.id'))
+    argument = Column(Text, nullable=False)
+    target_run_id = Column(String(36), ForeignKey('agent_runs.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    agent = relationship("AgentProfile")
+
+class JudgeDecision(Base):
+    __tablename__ = 'judge_decisions'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    task_context = Column(String(100), nullable=False)
+    scores_json = Column(JSON, nullable=True) # {run_id: {accuracy: 8, creativity: 7, ...}}
+    winner_run_id = Column(String(36), ForeignKey('agent_runs.id'))
+    reasoning = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class ConsensusResult(Base):
+    __tablename__ = 'consensus_results'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    task_context = Column(String(100), nullable=False)
+    merged_output = Column(Text, nullable=False)
+    source_run_ids_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class ModelPerformance(Base):
+    __tablename__ = 'model_performance'
+    
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    model_id = Column(String(200), nullable=False)
+    task_context = Column(String(100), nullable=False)
+    avg_score = Column(Float, default=0.0)
+    total_runs = Column(Integer, default=0)
+    failure_rate = Column(Float, default=0.0)
+    avg_latency_sec = Column(Float, default=0.0)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+

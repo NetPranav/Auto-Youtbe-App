@@ -23,19 +23,23 @@ class ContentEngine(BaseEngine):
     """
     Facade for the Content Phase (AI Writers' Room).
     """
-    def __init__(self, ai_provider: Any = None):
-        if not ai_provider:
+    def __init__(self, db_session: Any = None, provider_manager: Any = None):
+        self.db_session = db_session
+        self.provider_manager = provider_manager
+        
+        if not provider_manager:
             from providers.manager import ProviderManager
-            ai_provider = ProviderManager().get_llm_provider()
+            provider_manager = ProviderManager()
+            self.provider_manager = provider_manager
             
-        self.ai = ai_provider
+        self.ai = provider_manager.get_llm_provider()
         self.repo = ContentRepository()
         
         self.context_builder = ResearchContextBuilder()
         self.strategist = ContentStrategist(self.ai)
         self.hook_generator = HookGenerator(self.ai)
         self.outline_generator = OutlineGenerator(self.ai)
-        self.script_generator = ScriptGenerator(self.ai)
+        self.script_generator = ScriptGenerator(self.provider_manager, self.db_session)
         self.fact_checker = FactChecker(self.ai)
         self.script_reviewer = ScriptReviewer(self.ai)
         self.retention_analyzer = RetentionAnalyzer(self.ai)
