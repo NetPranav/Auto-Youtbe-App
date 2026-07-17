@@ -1,8 +1,8 @@
-from common.logger import get_logger
+from common import logger
 from sqlalchemy.orm import Session
 from database.models import Notification
 
-logger = get_logger(__name__)
+
 
 class NotificationEngine:
     def __init__(self, db_session: Session):

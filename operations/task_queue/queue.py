@@ -1,10 +1,10 @@
 from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
-from common.logger import get_logger
+from common import logger
 from database.models import QueueItem
 
-logger = get_logger(__name__)
+
 
 class TaskQueue:
     def __init__(self, db_session: Session):

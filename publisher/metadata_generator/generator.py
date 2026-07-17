@@ -1,9 +1,9 @@
 import json
-from common.logger import get_logger
+from common import logger
 from providers.manager import ProviderManager
 from publisher.prompts.metadata_prompt import METADATA_GENERATION_PROMPT
 
-logger = get_logger(__name__)
+
 
 class MetadataGenerator:
     def __init__(self, provider_manager: ProviderManager):

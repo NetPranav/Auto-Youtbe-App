@@ -4,9 +4,9 @@ import os
 import functools
 from datetime import datetime, timezone
 from infrastructure.tracing.tracer import trace_context
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 METRICS_LOG_PATH = os.path.join("logs", "metrics.jsonl")
 

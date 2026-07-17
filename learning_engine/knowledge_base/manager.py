@@ -3,9 +3,9 @@ import os
 from typing import List, Dict
 from sqlalchemy.orm import Session
 from database.models import StrategyRecommendation, KnowledgeEntry
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class KnowledgeManager:
     def __init__(self, db_session: Session, strategy_file: str = "data/strategy.json"):

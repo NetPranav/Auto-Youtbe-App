@@ -7,6 +7,8 @@ from common import logger
 from config import config
 from asset_engine.providers.base import BaseVoiceProvider
 
+from common.retry_helpers import with_retry
+
 class EdgeTTSProvider(BaseVoiceProvider):
     @property
     def provider_name(self) -> str:
@@ -20,6 +22,7 @@ class EdgeTTSProvider(BaseVoiceProvider):
         communicate = edge_tts.Communicate(text, self.voice)
         await communicate.save(output_path)
 
+    @with_retry(max_retries=3, delay=5, backoff=2)
     def generate_voice(self, text: str, output_dir: str) -> Optional[str]:
         try:
             os.makedirs(output_dir, exist_ok=True)

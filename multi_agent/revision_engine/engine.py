@@ -1,8 +1,8 @@
-from common.logger import get_logger
+from common import logger
 from providers.manager import ProviderManager
 from multi_agent.prompt_variants.prompts import REVISION_PROMPT
 
-logger = get_logger(__name__)
+
 
 class RevisionEngine:
     """

@@ -2,10 +2,10 @@ import os
 import shutil
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import BackupRecord
 
-logger = get_logger(__name__)
+
 
 class BackupManager:
     """

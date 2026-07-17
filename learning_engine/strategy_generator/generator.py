@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class StrategyGenerator:
     def generate(self, perf: Dict[str, Any], ret: Dict[str, str], seo: Dict[str, str], thumb: Dict[str, str], aud: Dict[str, str]) -> List[Dict[str, str]]:

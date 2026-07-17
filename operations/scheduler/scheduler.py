@@ -1,9 +1,9 @@
 import time
 import schedule
 import threading
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class Scheduler:
     """

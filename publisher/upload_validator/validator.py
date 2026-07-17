@@ -1,7 +1,7 @@
 import os
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class UploadValidator:
     def validate(self, video_path: str, thumbnail_path: str, metadata: dict) -> bool:

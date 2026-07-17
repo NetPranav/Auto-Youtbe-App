@@ -1,10 +1,10 @@
 import uuid
 from typing import Dict, Any
-from common.logger import get_logger
+from common import logger
 from operations.task_queue.queue import TaskQueue
 from operations.event_bus.bus import EventBus
 
-logger = get_logger(__name__)
+
 
 class WorkflowPlanner:
     def __init__(self, queue: TaskQueue, bus: EventBus):

@@ -1,12 +1,12 @@
 import json
 from typing import List
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import AgentRun, PeerReview, DebateRound
 from providers.manager import ProviderManager
 from multi_agent.prompt_variants.prompts import PEER_REVIEW_PROMPT, DEBATE_PROMPT
 
-logger = get_logger(__name__)
+
 
 class DebateEngine:
     """

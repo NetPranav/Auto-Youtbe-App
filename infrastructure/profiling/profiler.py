@@ -1,8 +1,8 @@
 import psutil
 import os
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class Profiler:
     """

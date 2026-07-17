@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from .database import engine
 
 # Create a configured "Session" class
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 
 @contextmanager
 def get_db_session():

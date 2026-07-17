@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from operations.resource_manager.manager import ResourceManager
 
-logger = get_logger(__name__)
+
 
 class HealthMonitor:
     def __init__(self, db_session: Session, resource_manager: ResourceManager):

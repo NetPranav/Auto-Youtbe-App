@@ -1,9 +1,9 @@
 import json
 import subprocess
 from video_engine.models.state import Timeline
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class AudioSynchronizer:
     def sync(self, timeline: Timeline) -> Timeline:

@@ -2,9 +2,9 @@ import os
 import uuid
 import random
 from video_engine.models.state import Timeline, TimelineClip
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class MusicMixer:
     def __init__(self, music_dir: str = "assets/music"):

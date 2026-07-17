@@ -2,10 +2,10 @@ import os
 import glob
 import time
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import MaintenanceTask
 
-logger = get_logger(__name__)
+
 
 class Janitor:
     """

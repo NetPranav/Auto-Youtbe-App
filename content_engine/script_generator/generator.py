@@ -34,8 +34,8 @@ class ScriptGenerator:
                 
             # Fallback if AI fails or returns empty
             if not script or script.startswith("Error:"):
-                script = f"{hook.text}\n\nWelcome back... [AI Generation Failed]"
+                script = f"{hook.text}\n\nWelcome back to the channel. Today we're looking at something brand new. [AI Generation Failed but continuing with fallback...]\n\nThis technology has the potential to completely disrupt the industry. Let's look at a few reasons why you need to pay attention right now.\n\nFinally, make sure to subscribe if you want to stay updated on the latest trends in tech. See you in the next one!"
         else:
-            script = f"{hook.text}\n\nWelcome back to the channel. Today we're looking at something brand new."
+            script = f"{hook.text}\n\nWelcome back to the channel. Today we're looking at something brand new. [AI DB offline but continuing with fallback...]\n\nThis technology has the potential to completely disrupt the industry. Let's look at a few reasons why you need to pay attention right now.\n\nFinally, make sure to subscribe if you want to stay updated on the latest trends in tech. See you in the next one!"
             
         return script

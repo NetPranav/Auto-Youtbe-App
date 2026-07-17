@@ -2,10 +2,10 @@ import json
 import os
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from infrastructure.diagnostics.engine import DiagnosticsEngine
 
-logger = get_logger(__name__)
+
 
 REPORTS_DIR = os.path.join("logs", "reports")
 

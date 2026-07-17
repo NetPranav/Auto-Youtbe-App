@@ -1,11 +1,11 @@
 from typing import List
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import AgentRun, JudgeDecision, ConsensusResult
 from providers.manager import ProviderManager
 from multi_agent.prompt_variants.prompts import CONSENSUS_PROMPT
 
-logger = get_logger(__name__)
+
 
 class ConsensusEngine:
     """

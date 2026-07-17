@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import OperationDecision, QueueItem
 from operations.decision_engine.engine import DecisionEngine
 from operations.workflow_planner.planner import WorkflowPlanner
 
-logger = get_logger(__name__)
+
 
 class CEOAgent:
     def __init__(self, db_session: Session, decision_engine: DecisionEngine, workflow_planner: WorkflowPlanner):

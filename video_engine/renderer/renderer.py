@@ -3,9 +3,9 @@ import subprocess
 import time
 from typing import Optional
 from video_engine.models.state import Timeline
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class VideoRenderer:
     def __init__(self, output_dir: str = "assets/renders"):
@@ -39,7 +39,8 @@ class VideoRenderer:
                 f.write(f"duration {clip.duration}\n")
             # Ffmpeg requires repeating the last file without duration to avoid glitching
             if visual_clips:
-                f.write(f"file '{os.path.abspath(visual_clips[-1].asset_path.replace('\\', '/'))}'\n")
+                last_path = visual_clips[-1].asset_path.replace('\\', '/')
+                f.write(f"file '{os.path.abspath(last_path)}'\n")
                 
         cmd = [
             "ffmpeg", "-y",
@@ -60,11 +61,10 @@ class VideoRenderer:
         
         # Subtitles (simplified, assuming srt)
         if subtitle_clips:
-            # Need to escape path for filter graph (replace \ with /, escape colons)
-            sub_path = subtitle_clips[0].asset_path.replace('\\', '/').replace(':', '\\:')
-            # Basic style string
-            style = "FontName=Arial,FontSize=24,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=1,Outline=2,Shadow=1"
-            filter_str += f",subtitles={sub_path}:force_style='{style}'"
+            # Homebrew's default ffmpeg doesn't include libass (No such filter: 'subtitles')
+            # For this prototype, we'll skip burning subtitles into the video
+            logger.warning("[VideoRenderer] Skipping subtitle burn-in due to missing libass in FFmpeg.")
+            pass
             
         cmd.extend([
             "-vf", filter_str,

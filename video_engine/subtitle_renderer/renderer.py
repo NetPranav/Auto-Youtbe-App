@@ -1,9 +1,9 @@
 import os
 import uuid
 from video_engine.models.state import Timeline
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class SubtitleRenderer:
     def __init__(self, storage_dir: str = "assets/rendered"):
@@ -22,20 +22,7 @@ class SubtitleRenderer:
             # or just rely on FFmpeg's `subtitles=file.srt:force_style='FontName=Arial,FontSize=24'`
             # It's easier and cleaner to construct the FFmpeg filter string directly here.
             
-            # We don't physically change the file, we just append the exact styling to the clip's properties.
-            if not clip.properties_json:
-                clip.properties_json = {}
-                
-            clip.properties_json["subtitle_style"] = (
-                "FontName=Arial,"
-                "FontSize=22,"
-                "PrimaryColour=&H00FFFFFF,"
-                "OutlineColour=&H00000000,"
-                "BorderStyle=1,"
-                "Outline=2,"
-                "Shadow=1,"
-                "MarginV=50"
-            )
+            # Style is currently hardcoded in the ffmpeg VideoRenderer
             
             logger.debug(f"[SubtitleRenderer] Styled subtitle clip {clip.id}")
             

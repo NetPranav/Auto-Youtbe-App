@@ -1,8 +1,8 @@
 import uuid
 import contextvars
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 # Context variable that holds the current trace ID for the entire workflow
 _trace_id: contextvars.ContextVar[str] = contextvars.ContextVar('trace_id', default='NO_TRACE')

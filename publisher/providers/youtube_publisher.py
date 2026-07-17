@@ -3,7 +3,7 @@ import uuid
 import time
 from typing import Optional
 from datetime import datetime
-from common.logger import get_logger
+from common import logger
 from publisher.providers.base import BasePublisher
 
 # In a real environment, we would import googleapiclient here
@@ -11,7 +11,7 @@ from publisher.providers.base import BasePublisher
 # from googleapiclient.http import MediaFileUpload
 # from google_auth_oauthlib.flow import InstalledAppFlow
 
-logger = get_logger(__name__)
+
 
 class YouTubePublisher(BasePublisher):
     def __init__(self, client_secret_path: str):

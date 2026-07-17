@@ -1,7 +1,7 @@
 import re
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 # Patterns that match common secret formats
 SECRET_PATTERNS = [

@@ -21,6 +21,7 @@ class TimelineClip(BaseModel):
     end_time: float
     layer: int = 0
     duration: float = 0.0
+    properties_json: Dict[str, Any] = Field(default_factory=dict)
     
     # Visual specific
     motion_type: Optional[str] = None

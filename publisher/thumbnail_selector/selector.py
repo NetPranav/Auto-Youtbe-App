@@ -1,10 +1,10 @@
 import os
 from typing import Optional
-from common.logger import get_logger
+from common import logger
 from database.models import AssetPackage, Asset
 from sqlalchemy.orm import Session
 
-logger = get_logger(__name__)
+
 
 class ThumbnailSelector:
     def __init__(self, db_session: Session):

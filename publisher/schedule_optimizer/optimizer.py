@@ -1,8 +1,8 @@
 from datetime import datetime, timezone, timedelta
 from typing import Optional
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class ScheduleOptimizer:
     def optimize(self, immediate: bool = True) -> Optional[datetime]:

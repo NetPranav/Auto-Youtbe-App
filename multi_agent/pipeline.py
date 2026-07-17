@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from providers.manager import ProviderManager
 
 from multi_agent.agent_registry.registry import AgentRegistry
@@ -10,7 +10,7 @@ from multi_agent.consensus_engine.engine import ConsensusEngine
 from multi_agent.revision_engine.engine import RevisionEngine
 from multi_agent.evaluation.scorer import Scorer
 
-logger = get_logger(__name__)
+
 
 class MultiAgentPipeline:
     """

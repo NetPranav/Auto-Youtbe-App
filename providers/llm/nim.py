@@ -7,6 +7,7 @@ from providers.models import TaskCategory
 from providers.statistics import ProviderStatistics
 from providers.fallback.handler import ProviderFallbackHandler
 from common import logger
+from common.retry_helpers import with_retry
 
 class NimLLMProvider(BaseLLMProvider):
     def __init__(self):
@@ -23,6 +24,7 @@ class NimLLMProvider(BaseLLMProvider):
         self.fallback_handler = ProviderFallbackHandler()
         
     def generate_text(self, prompt: str, system_prompt: str = "", task_category: TaskCategory = TaskCategory.DEFAULT_REASONING) -> str:
+        @with_retry(max_retries=3, delay=5, backoff=2)
         def _execute(model: str) -> str:
             logger.info(f"[NIM LLM] Routing task {task_category.value} to model: {model}")
             completion = self.client.chat.completions.create(
@@ -64,6 +66,7 @@ class NimLLMProvider(BaseLLMProvider):
             )
             
     def generate_json(self, prompt: str, system_prompt: str = "", task_category: TaskCategory = TaskCategory.DEFAULT_REASONING) -> str:
+        @with_retry(max_retries=3, delay=5, backoff=2)
         def _execute(model: str) -> str:
             logger.info(f"[NIM LLM] Routing JSON task {task_category.value} to model: {model}")
             sys_prompt = system_prompt + "\nIMPORTANT: Return ONLY valid JSON."

@@ -1,12 +1,12 @@
 import json
 from typing import List, Dict
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import AgentRun, JudgeDecision
 from providers.manager import ProviderManager
 from multi_agent.prompt_variants.prompts import JUDGE_PROMPT
 
-logger = get_logger(__name__)
+
 
 class JudgeEngine:
     """

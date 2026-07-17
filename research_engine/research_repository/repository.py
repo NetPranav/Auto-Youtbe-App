@@ -34,19 +34,21 @@ class ResearchRepository(BaseRepository):
         """Saves normalized articles."""
         with get_db_session() as db:
             for art in articles:
-                db_art = Article(
-                    session_id=session_id,
-                    title=art.title,
-                    url=art.url,
-                    source=art.source,
-                    publication_date=art.publication_date,
-                    author=art.author,
-                    summary=art.summary,
-                    full_text=art.full_text,
-                    categories=art.categories,
-                    tags=art.tags
-                )
-                db.add(db_art)
+                existing = db.query(Article).filter(Article.url == art.url).first()
+                if not existing:
+                    db_art = Article(
+                        session_id=session_id,
+                        title=art.title,
+                        url=art.url,
+                        source=art.source,
+                        publication_date=art.publication_date,
+                        author=art.author,
+                        summary=art.summary,
+                        full_text=art.full_text,
+                        categories=art.categories,
+                        tags=art.tags
+                    )
+                    db.add(db_art)
 
     def get_past_topics(self) -> List[Topic]:
         """Fetches previously extracted topics for duplicate detection."""

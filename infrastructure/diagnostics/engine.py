@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import DiagnosticReport, QueueItem, Alert
 from infrastructure.profiling.profiler import Profiler
 from infrastructure.credential_manager.manager import CredentialManager
 
-logger = get_logger(__name__)
+
 
 class DiagnosticsEngine:
     """

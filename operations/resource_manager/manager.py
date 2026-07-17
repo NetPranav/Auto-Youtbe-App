@@ -1,7 +1,7 @@
 import psutil
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class ResourceManager:
     def __init__(self, max_cpu_percent: float = 90.0, max_ram_percent: float = 90.0):

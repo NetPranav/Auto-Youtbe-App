@@ -3,9 +3,9 @@ import json
 from video_engine.models.state import Timeline
 from database.models import VideoProject, Timeline as DBTimeline, RenderJob, RenderResult, VideoMetadata, RenderStatistics
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class VideoExporter:
     def __init__(self, db_session: Session):

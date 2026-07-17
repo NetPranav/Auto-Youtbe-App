@@ -1,7 +1,7 @@
 from typing import Dict, Any
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class SEOAnalyzer:
     def analyze(self, ctr: float) -> Dict[str, str]:

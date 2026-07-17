@@ -1,10 +1,10 @@
 import json
 from typing import Dict, Any
-from common.logger import get_logger
+from common import logger
 from providers.manager import ProviderManager
 from learning_engine.prompts.analyzer_prompts import PERFORMANCE_ANALYSIS_PROMPT
 
-logger = get_logger(__name__)
+
 
 class PerformanceAnalyzer:
     def __init__(self, provider_manager: ProviderManager):

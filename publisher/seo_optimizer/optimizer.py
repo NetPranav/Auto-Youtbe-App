@@ -1,6 +1,6 @@
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class SEOOptimizer:
     def optimize(self, metadata: dict) -> dict:

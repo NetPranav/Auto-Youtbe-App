@@ -3,10 +3,10 @@ import shutil
 import zipfile
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import BackupRecord, RestoreRecord
 
-logger = get_logger(__name__)
+
 
 class RestoreManager:
     """

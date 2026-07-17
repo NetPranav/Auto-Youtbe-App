@@ -1,7 +1,7 @@
 from typing import List, Dict
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 # Default agent personas for the AI Editorial Board
 DEFAULT_AGENTS = [

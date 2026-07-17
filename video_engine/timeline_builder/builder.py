@@ -1,11 +1,11 @@
 import uuid
 from typing import List, Dict, Any
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from database.models import AssetPackage, Asset, Scene
 from video_engine.models.state import Timeline, TimelineClip
 
-logger = get_logger(__name__)
+
 
 class TimelineBuilder:
     def __init__(self, db_session: Session):

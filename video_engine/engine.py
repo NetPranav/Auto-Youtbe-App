@@ -2,7 +2,7 @@ import uuid
 import time
 from sqlalchemy.orm import Session
 from config import config
-from common.logger import get_logger
+from common import logger
 from database.models import AssetPackage, VideoProject
 
 from video_engine.timeline_builder.builder import TimelineBuilder
@@ -16,8 +16,6 @@ from video_engine.effects_engine.effects import EffectsEngine
 from video_engine.quality_validator.validator import QualityValidator
 from video_engine.renderer.renderer import VideoRenderer
 from video_engine.exporter.exporter import VideoExporter
-
-logger = get_logger(__name__)
 
 class VideoEngine:
     def __init__(self, db_session: Session):

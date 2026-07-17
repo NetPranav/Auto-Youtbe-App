@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from providers.manager import ProviderManager
 from database.models import PublishedVideo, AnalyticsSnapshot, PerformanceReport
 
@@ -14,7 +14,7 @@ from learning_engine.audience_analyzer.analyzer import AudienceAnalyzer
 from learning_engine.strategy_generator.generator import StrategyGenerator
 from learning_engine.knowledge_base.manager import KnowledgeManager
 
-logger = get_logger(__name__)
+
 
 class LearningEngine:
     def __init__(self, db_session: Session, provider_manager: ProviderManager):

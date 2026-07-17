@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from common.logger import get_logger
+from common import logger
 from operations.task_queue.queue import TaskQueue
 from operations.event_bus.bus import EventBus
 from operations.resource_manager.manager import ResourceManager
@@ -17,7 +17,7 @@ from video_engine.engine import VideoEngine
 from publisher.engine import PublishingEngine
 from learning_engine.engine import LearningEngine
 
-logger = get_logger(__name__)
+
 
 class Dispatcher:
     """

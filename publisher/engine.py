@@ -3,7 +3,7 @@ from typing import Optional, Dict
 from sqlalchemy.orm import Session
 
 from config import config
-from common.logger import get_logger
+from common import logger
 from database.models import VideoProject, RenderResult, PublishedVideo, PlatformMetadata, UploadAttempt, PublishingSchedule, PublishingResult
 from providers.manager import ProviderManager
 
@@ -15,7 +15,7 @@ from publisher.upload_validator.validator import UploadValidator
 from publisher.notification_engine.notifier import NotificationEngine
 from publisher.providers.youtube_publisher import YouTubePublisher
 
-logger = get_logger(__name__)
+
 
 class PublishingEngine:
     def __init__(self, db_session: Session, provider_manager: ProviderManager):

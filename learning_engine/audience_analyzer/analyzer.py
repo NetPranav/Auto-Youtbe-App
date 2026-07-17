@@ -1,7 +1,7 @@
 from typing import Dict, Any
-from common.logger import get_logger
+from common import logger
 
-logger = get_logger(__name__)
+
 
 class AudienceAnalyzer:
     def analyze(self, views: int) -> Dict[str, str]:
