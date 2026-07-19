@@ -34,11 +34,17 @@ class DebateEngine:
                 full_prompt = f"{reviewer_run.agent.personality_prefix}\n\n{prompt}"
                 
                 try:
-                    response = self.provider.generate_text(full_prompt, max_tokens=500)
+                    response = self.provider.generate_text(full_prompt)
                     if "```json" in response:
                         response = response.split("```json")[1].split("```")[0].strip()
                     elif "```" in response:
                         response = response.split("```")[1].strip()
+                        
+                    start_idx = response.find('{')
+                    end_idx = response.rfind('}')
+                    if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+                        response = response[start_idx:end_idx+1]
+                        
                     feedback = json.loads(response)
                 except Exception as e:
                     logger.warning(f"[DebateEngine] Peer review parse failed: {e}")
@@ -71,7 +77,7 @@ class DebateEngine:
                 )
                 
                 try:
-                    argument = self.provider.generate_text(prompt, max_tokens=200)
+                    argument = self.provider.generate_text(prompt)
                 except Exception:
                     argument = "No argument generated."
                     

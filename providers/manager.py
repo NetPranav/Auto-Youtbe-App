@@ -36,6 +36,7 @@ class ProviderManager:
             benchmarker.run_benchmarks()
         
     def get_llm_provider(self):
+        """Always uses NVIDIA NIM for text generation (research, scripts, etc.)."""
         if not self._llm_provider:
             provider_type = config.ai_text_provider.lower()
             if provider_type == "nim":
@@ -47,6 +48,7 @@ class ProviderManager:
         return self._llm_provider
         
     def get_image_provider(self):
+        """Uses NIM Stable Diffusion for image generation since Gemini is blocked/unavailable."""
         if not self._image_provider:
             provider_type = config.image_provider.lower()
             if provider_type == "nim":
@@ -58,6 +60,7 @@ class ProviderManager:
         return self._image_provider
         
     def get_voice_provider(self):
+        """Always uses EdgeTTS (free, commercially safe for YouTube)."""
         if not self._voice_provider:
             provider_type = config.voice_provider.lower()
             if provider_type == "edge_tts":
@@ -104,5 +107,5 @@ class ProviderManager:
         except Exception as e:
             logger.error(f"[ProviderManager] Collaborative generation failed: {e}. Falling back to single-model generation.")
             provider = self.get_llm_provider()
-            return provider.generate_text(prompt, max_tokens=2500)
+            return provider.generate_text(prompt)
 

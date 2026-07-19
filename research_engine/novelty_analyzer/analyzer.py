@@ -28,13 +28,4 @@ class NoveltyAnalyzer:
         else:
             score = 0.5  # default
             
-        importance = candidate.importance.lower()
-        
-        if importance == "breaking":
-            score = 0.95
-        elif importance == "major":
-            score = 0.8
-        elif importance == "minor":
-            score = 0.4
-            
         return score

@@ -62,12 +62,13 @@ class ResearchRepository(BaseRepository):
             db_topic = Topic(
                 session_id=session_id,
                 title=topic_data.title,
-                main_technology=topic_data.main_technology,
-                secondary_technologies=topic_data.secondary_technologies,
-                industry=topic_data.industry,
-                importance=topic_data.importance,
-                estimated_audience=topic_data.estimated_audience,
-                description=topic_data.description,
+                problem_definition=topic_data.problem_definition,
+                historical_comparison=topic_data.historical_comparison,
+                root_cause_analysis=topic_data.root_cause_analysis,
+                supporting_evidence=topic_data.supporting_evidence,
+                counterarguments=topic_data.counterarguments,
+                global_comparison=topic_data.global_comparison,
+                practical_solutions=topic_data.practical_solutions,
                 is_approved=is_approved,
                 embedding=[0.1, 0.2, 0.3] # Mock embedding
             )
@@ -76,13 +77,15 @@ class ResearchRepository(BaseRepository):
             
             db_score = TopicScore(
                 topic_id=db_topic.id,
-                novelty=score_data.novelty,
-                audience_size=score_data.audience_size,
+                evidence_strength=score_data.evidence_strength,
+                source_reliability=score_data.source_reliability,
+                historical_coverage=score_data.historical_coverage,
+                expert_consensus=score_data.expert_consensus,
+                conflict_risk=score_data.conflict_risk,
                 educational_value=score_data.educational_value,
-                search_interest=score_data.search_interest,
-                competition=score_data.competition,
-                recency=score_data.recency,
-                total_score=score_data.total_score
+                practical_relevance=score_data.practical_relevance,
+                total_score=score_data.total_score,
+                confidence_score=score_data.confidence_score
             )
             db.add(db_score)
             

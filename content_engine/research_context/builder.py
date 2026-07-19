@@ -16,12 +16,13 @@ class ResearchContextBuilder:
         
         context = (
             f"Topic: {topic.title}\n"
-            f"Main Technology: {topic.main_technology}\n"
-            f"Secondary Technologies: {', '.join(topic.secondary_technologies) if topic.secondary_technologies else 'None'}\n"
-            f"Industry: {topic.industry}\n"
-            f"Importance: {topic.importance}\n"
-            f"Audience: {topic.estimated_audience}\n\n"
-            f"Description:\n{topic.description}\n"
+            f"Problem Definition: {topic.problem_definition}\n"
+            f"Historical Comparison: {topic.historical_comparison}\n"
+            f"Root Cause Analysis: {topic.root_cause_analysis}\n"
+            f"Supporting Evidence: {topic.supporting_evidence}\n"
+            f"Counterarguments: {topic.counterarguments}\n"
+            f"Global Comparison: {topic.global_comparison}\n"
+            f"Practical Solutions: {topic.practical_solutions}\n"
         )
         
         return context

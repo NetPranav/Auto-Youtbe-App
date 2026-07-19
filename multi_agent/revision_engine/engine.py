@@ -17,7 +17,7 @@ class RevisionEngine:
         prompt = REVISION_PROMPT.format(content=content)
         
         try:
-            polished = self.provider.generate_text(prompt, max_tokens=2500)
+            polished = self.provider.generate_text(prompt)
             return polished
         except Exception as e:
             logger.error(f"[RevisionEngine] Polish failed: {e}. Returning original content.")

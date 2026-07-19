@@ -28,29 +28,40 @@ class ScenePlanner:
             # In a real impl we'd parse JSON from the LLM to build scenes.
             # For now, we fallback to our basic regex matcher if it's mock text. 
         
-        # Split script into paragraphs for simple heuristic scenes
-        paragraphs = [p.strip() for p in script.split('\n\n') if p.strip()]
-        if not paragraphs:
-            paragraphs = ["Did you know this tech exists?"]
+        import re
+        
+        # Split script into sentences for high-paced, context-matched scenes
+        # This splits by punctuation (., !, ?) followed by a space
+        raw_sentences = re.split(r'(?<=[.!?]) +', script.replace('\n', ' '))
+        sentences = [s.strip() for s in raw_sentences if s.strip()]
+        
+        if not sentences:
+            sentences = ["Did you know this tech exists?"]
             
         scenes = []
-        for i, para in enumerate(paragraphs):
-            # Generate a simple visual description based on the paragraph
-            words = para.split()
-            keywords = " ".join(words[:10]) # use first few words as prompt
+        for i, sentence in enumerate(sentences):
+            # Generate a simple visual description based on the sentence
+            # Remove non-alphanumeric chars for cleaner prompting
+            clean_sentence = re.sub(r'[^a-zA-Z0-9 ]', '', sentence)
+            words = clean_sentence.split()
+            keywords = " ".join(words[:7]) # use first few words as prompt
+            
+            # Alternate animations
+            animations = ["Zoom in", "Pan right", "Zoom out", "Pan left"]
+            animation = animations[i % len(animations)]
             
             scenes.append(
                 SceneData(
                     scene_number=i+1,
                     start_time=f"00:0{i*5}", # mock times, AudioSync corrects this later anyway
                     end_time=f"00:0{(i+1)*5}",
-                    narration_text=para,
-                    visual_description=f"A cinematic representation of: {keywords}...",
-                    animation_suggestions="Zoom in" if i % 2 == 0 else "Pan right",
+                    narration_text=sentence,
+                    visual_description=f"A cinematic, historical documentary scene of: {keywords}, hyper-realistic, dramatic lighting, 8k resolution",
+                    animation_suggestions=animation,
                     asset_type_required="IMAGE",
                     transition_suggestion="Fade",
                     camera_movement="None",
-                    subtitle_segment=para
+                    subtitle_segment=sentence
                 )
             )
         

@@ -16,6 +16,7 @@ Provide structured feedback as a JSON object:
     "suggested_improvement": "One specific actionable improvement."
 }}
 
+CRITICAL RULE: Evaluate strictly on factual accuracy, neutrality, and educational value. Reject any political bias, blame, or sensationalism.
 Return ONLY the JSON object.
 """
 
@@ -33,7 +34,8 @@ Previous arguments in this debate:
 {previous_arguments}
 
 Based on your expertise, make ONE specific, well-reasoned argument about this draft.
-Focus on what could be improved from your area of expertise.
+Focus on factual accuracy, missing evidence, or potential bias.
+CRITICAL RULE: You must enforce strict political neutrality. Do not tolerate speculation or blame.
 Keep your argument under 100 words.
 """
 
@@ -45,20 +47,20 @@ You are evaluating {num_drafts} competing drafts for the task: {task_context}
 {drafts_section}
 
 Score each draft on these criteria (0-10 each):
-- Accuracy
-- Creativity
+- Accuracy (Are the claims supported by evidence?)
+- Neutrality (Is it free from political bias and blame?)
 - Retention (will viewers stay?)
 - SEO (will this get discovered?)
-- Clarity
+- Clarity (Is it easy to understand?)
 
 Return ONLY a valid JSON object:
 {{
     "scores": {{
-        "Draft 1": {{"accuracy": 8, "creativity": 7, "retention": 9, "seo": 6, "clarity": 8, "total": 38}},
-        "Draft 2": {{"accuracy": 7, "creativity": 9, "retention": 8, "seo": 7, "clarity": 7, "total": 38}}
+        "Draft 1": {{"accuracy": 8, "neutrality": 9, "retention": 9, "seo": 6, "clarity": 8, "total": 40}},
+        "Draft 2": {{"accuracy": 7, "neutrality": 8, "retention": 8, "seo": 7, "clarity": 7, "total": 37}}
     }},
     "winner": "Draft 1",
-    "reasoning": "Brief explanation of why this draft won."
+    "reasoning": "Brief explanation of why this draft won based on evidence and neutrality."
 }}
 """
 
@@ -73,11 +75,12 @@ Judge's analysis:
 {judge_reasoning}
 
 Create the BEST possible output by combining:
-- The strongest hook from any draft
-- The clearest explanations from any draft
-- The best conclusion from any draft
+- The strongest, most factual hook from any draft
+- The clearest explanations of the root causes
+- The most balanced, neutral conclusion
 - The most engaging transitions
 
+CRITICAL RULE: The final output must be 100% politically neutral, evidence-based, and educational. Remove any sensationalism or bias.
 Output ONLY the final merged content. No commentary.
 """
 
@@ -93,7 +96,8 @@ Improve:
 1. Flow and readability
 2. Remove any repetition
 3. Strengthen engagement
-4. Ensure factual consistency
+4. Ensure absolute political neutrality and factual consistency
 
+CRITICAL RULE: Do not add any new claims. Ensure the tone is objective, respectful, and fact-first.
 Output ONLY the revised content. No commentary.
 """

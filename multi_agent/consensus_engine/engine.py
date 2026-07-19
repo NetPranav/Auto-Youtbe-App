@@ -30,7 +30,7 @@ class ConsensusEngine:
         )
         
         try:
-            merged_output = self.provider.generate_text(prompt, max_tokens=2500)
+            merged_output = self.provider.generate_text(prompt)
         except Exception as e:
             logger.error(f"[ConsensusEngine] Merge failed: {e}. Defaulting to winner draft.")
             winner_run = self.db.query(AgentRun).filter(AgentRun.id == judge_decision.winner_run_id).first()

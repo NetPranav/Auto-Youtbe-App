@@ -6,24 +6,27 @@ class TopicCandidate(BaseModel):
     Extracted Topic data structure before it is scored.
     """
     title: str
-    main_technology: str
-    secondary_technologies: List[str] = []
-    industry: Optional[str] = None
-    importance: str = "Minor"  # Breaking, Major, Minor
-    estimated_audience: str = "Niche" # Mass, Broad, Niche
-    description: str
+    problem_definition: str
+    historical_comparison: str
+    root_cause_analysis: str
+    supporting_evidence: str
+    counterarguments: str
+    global_comparison: str
+    practical_solutions: str
 
 class TopicScoreData(BaseModel):
     """
     Scores assigned to a TopicCandidate.
     """
-    novelty: float = 0.0
-    audience_size: float = 0.0
+    evidence_strength: float = 0.0
+    source_reliability: float = 0.0
+    historical_coverage: float = 0.0
+    expert_consensus: float = 0.0
+    conflict_risk: float = 0.0
     educational_value: float = 0.0
-    search_interest: float = 0.0
-    competition: float = 0.0
-    recency: float = 0.0
+    practical_relevance: float = 0.0
     total_score: float = 0.0
+    confidence_score: float = 0.0
     
 class RankedTopic(BaseModel):
     """

@@ -73,11 +73,18 @@ class ResearchEngine(BaseEngine):
                 # Rank
                 score = self.ranker.rank(candidate, novelty)
                 
-                # Add to ranked pool
-                ranked_topics.append(RankedTopic(topic_id="", candidate=candidate, score=score))
+                # Add to ranked pool if confidence score meets the 9.0 threshold
+                if score.confidence_score >= 9.0:
+                    ranked_topics.append(RankedTopic(topic_id="", candidate=candidate, score=score))
+                else:
+                    logger.warning(f"Topic '{candidate.title}' rejected due to low confidence score ({score.confidence_score:.2f} < 9.0)")
                 
             # 4. Select Best
-            best_topic = self.selector.select(ranked_topics)
+            if not ranked_topics:
+                logger.error("No topics met the strict 9.0 confidence score threshold. Rejecting all.")
+                best_topic = None
+            else:
+                best_topic = self.selector.select(ranked_topics)
             
             # 5. Save all processed topics, mark the best one as approved
             approved_topic_id = None

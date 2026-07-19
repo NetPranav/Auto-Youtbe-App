@@ -32,6 +32,25 @@ def main():
     if result:
         logger.success("Content Engine generated a full package!")
         
+        # === SAVE DEBUG SCRIPT ===
+        debug_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "assets")
+        os.makedirs(debug_dir, exist_ok=True)
+        debug_script_path = os.path.join(debug_dir, "debug_script.txt")
+        with open(debug_script_path, "w") as f:
+            f.write("=" * 80 + "\n")
+            f.write("FULL GENERATED SCRIPT (DEBUG OUTPUT)\n")
+            f.write("=" * 80 + "\n\n")
+            f.write(result.final_script or "N/A")
+            f.write("\n\n")
+            f.write("=" * 80 + "\n")
+            f.write(f"SCENES GENERATED: {len(result.scene_timeline)}\n")
+            f.write("=" * 80 + "\n")
+            for scene in result.scene_timeline:
+                f.write(f"\nScene {scene.scene_number}:\n")
+                f.write(f"  Narration: {scene.narration_text}\n")
+                f.write(f"  Visual: {scene.visual_description}\n")
+        logger.success(f"Debug script saved to: {debug_script_path}")
+        
         print("\n" + "="*80)
         print("THE CONTENT STRATEGY")
         print("="*80)

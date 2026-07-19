@@ -15,11 +15,18 @@ class EdgeTTSProvider(BaseVoiceProvider):
         return "EdgeTTS"
 
     def __init__(self):
-        # Default high-quality English voice
-        self.voice = "en-US-ChristopherNeural"
+        # GuyNeural is much more dynamic, expressive, and YouTube-friendly
+        # compared to ChristopherNeural which sounds like a newsreader
+        self.voice = "en-US-GuyNeural"
         
     async def _generate_async(self, text: str, output_path: str) -> None:
-        communicate = edge_tts.Communicate(text, self.voice)
+        # Use rate and pitch parameters for more energetic delivery
+        communicate = edge_tts.Communicate(
+            text, 
+            self.voice,
+            rate="+8%",   # Slightly faster for engaging Shorts pacing
+            pitch="+3Hz"  # Slightly higher pitch for energy
+        )
         await communicate.save(output_path)
 
     @with_retry(max_retries=3, delay=5, backoff=2)

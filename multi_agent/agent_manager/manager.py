@@ -41,7 +41,7 @@ class AgentManager:
         
         start = time.perf_counter()
         try:
-            output = provider.generate_text(full_prompt, max_tokens=2000)
+            output = provider.generate_text(full_prompt)
         except Exception as e:
             logger.error(f"[AgentManager] Agent '{profile.name}' failed: {e}")
             output = None

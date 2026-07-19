@@ -54,12 +54,13 @@ class Topic(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(String(36), ForeignKey('research_sessions.id'))
     title = Column(String(500), nullable=False)
-    main_technology = Column(String(200))
-    secondary_technologies = Column(JSON, nullable=True)
-    industry = Column(String(200), nullable=True)
-    importance = Column(String(50), nullable=True)  # Breaking, Major, Minor
-    estimated_audience = Column(String(50), nullable=True)
-    description = Column(Text, nullable=True)
+    problem_definition = Column(Text, nullable=True)
+    historical_comparison = Column(Text, nullable=True)
+    root_cause_analysis = Column(Text, nullable=True)
+    supporting_evidence = Column(Text, nullable=True)
+    counterarguments = Column(Text, nullable=True)
+    global_comparison = Column(Text, nullable=True)
+    practical_solutions = Column(Text, nullable=True)
     is_approved = Column(Boolean, default=False)
     embedding = Column(JSON, nullable=True) # Storing vector as JSON array for SQLite compatibility
     
@@ -71,13 +72,15 @@ class TopicScore(Base):
     
     id = Column(String(36), primary_key=True, default=generate_uuid)
     topic_id = Column(String(36), ForeignKey('topics.id'))
-    novelty = Column(Float, default=0.0)
-    audience_size = Column(Float, default=0.0)
+    evidence_strength = Column(Float, default=0.0)
+    source_reliability = Column(Float, default=0.0)
+    historical_coverage = Column(Float, default=0.0)
+    expert_consensus = Column(Float, default=0.0)
+    conflict_risk = Column(Float, default=0.0)
     educational_value = Column(Float, default=0.0)
-    search_interest = Column(Float, default=0.0)
-    competition = Column(Float, default=0.0)
-    recency = Column(Float, default=0.0)
+    practical_relevance = Column(Float, default=0.0)
     total_score = Column(Float, default=0.0)
+    confidence_score = Column(Float, default=0.0)
     
     topic = relationship("Topic", back_populates="score")
 

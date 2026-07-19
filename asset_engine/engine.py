@@ -55,12 +55,28 @@ class AssetEngine(BaseEngine):
                 plan = self.planner.plan_assets(analyzed_scenes, script_text)
             
             results = []
+            image_request_count = 0
             
             # 2. Execute Generation & Fetching
             for req in plan:
                 file_path = None
                 if req.asset_type == "IMAGE":
+                    # Add delay between image requests to avoid API rate limits
+                    if image_request_count > 0:
+                        import time
+                        logger.info(f"[AssetEngine] Waiting 3s before next image request (rate limit protection)...")
+                        time.sleep(3)
+                    
                     file_path = self.image_generator.generate(req.provider_type, req.parameters.get("prompt", ""), storage_dir)
+                    image_request_count += 1
+                    
+                    # Retry once if failed
+                    if not file_path:
+                        import time
+                        logger.warning(f"[AssetEngine] Image generation failed. Retrying in 5s...")
+                        time.sleep(5)
+                        file_path = self.image_generator.generate(req.provider_type, req.parameters.get("prompt", ""), storage_dir)
+                        
                 elif req.asset_type in ["FETCHED_IMAGE", "STOCK_VIDEO"]:
                     file_path = self.asset_fetcher.fetch(req.provider_type, req.parameters.get("query", ""), storage_dir)
                 elif req.asset_type == "VOICE":

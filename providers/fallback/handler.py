@@ -19,7 +19,10 @@ class ProviderFallbackHandler:
         
         for attempt, model_id in enumerate(fallback_chain):
             try:
-                logger.info(f"[FallbackHandler] Attempt {attempt+1}/{len(fallback_chain)} using model: {model_id}")
+                if attempt > 0:
+                    logger.warning(f"[FallbackHandler] Fallback triggered! Attempt {attempt+1}/{len(fallback_chain)} using model: {model_id}")
+                else:
+                    logger.debug(f"[FallbackHandler] Executing with primary model: {model_id}")
                 result = func(model_id)
                 # If success, return result
                 return result

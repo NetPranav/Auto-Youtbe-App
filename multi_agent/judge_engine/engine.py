@@ -30,11 +30,18 @@ class JudgeEngine:
         )
         
         try:
-            response = self.provider.generate_text(prompt, max_tokens=800)
+            response = self.provider.generate_text(prompt)
             if "```json" in response:
                 response = response.split("```json")[1].split("```")[0].strip()
             elif "```" in response:
                 response = response.split("```")[1].strip()
+            
+            # Find the first '{' and last '}' to extract only the JSON object
+            start_idx = response.find('{')
+            end_idx = response.rfind('}')
+            if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+                response = response[start_idx:end_idx+1]
+                
             result = json.loads(response)
         except Exception as e:
             logger.error(f"[JudgeEngine] Parse failed: {e}. Defaulting to first draft.")

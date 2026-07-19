@@ -1,0 +1,269 @@
+{
+    "content_package_id": "5f76314f-fe98-47ee-99fd-74ac9dc645b5",
+    "assets_generated": [
+        {
+            "asset_type": "VOICE",
+            "provider_type": "edge_tts",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/voice_344dfa11.mp3",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "SUBTITLE",
+            "provider_type": "internal",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/subtitles_1e41422a.srt",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_10f209bf.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_b6169b83.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_ee5aa355.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_d6f4fdd6.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_0235fc33.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_5fa3fbc9.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_37af4329.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_6e78a20d.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_10ac17cc.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_dfe73db5.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_90cca457.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_da8cd9d7.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_50162283.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_d3a2c28d.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_49973e3b.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_b353bce8.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_1543487b.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_64bc8ff2.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_4fd2b1b8.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        },
+        {
+            "asset_type": "IMAGE",
+            "provider_type": "nim",
+            "file_path": "assets/98d0eac1-a984-461a-b98e-0009cb431937/fallback_image_2b1a4abf.jpg",
+            "status": "PASSED",
+            "metadata": {
+                "file_exists": true,
+                "valid_format": true,
+                "corrupted": false,
+                "details": []
+            }
+        }
+    ]
+}

@@ -34,7 +34,6 @@ class NimLLMProvider(BaseLLMProvider):
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
-                max_tokens=1024,
             )
             response_text = completion.choices[0].message.content or ""
             return response_text
@@ -77,7 +76,6 @@ class NimLLMProvider(BaseLLMProvider):
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.1,
-                max_tokens=1024,
             )
             content = completion.choices[0].message.content or "{}"
             if content.startswith("```json"):
