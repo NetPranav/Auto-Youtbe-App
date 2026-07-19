@@ -56,11 +56,20 @@ class ResearchRepository(BaseRepository):
             # Querying all topics for now. In prod, maybe limit to past 6 months.
             return db.query(Topic).all()
 
-    def save_topic(self, session_id: str, topic_data: Any, score_data: Any, is_approved: bool) -> str:
+    def get_last_approved_category(self) -> str:
+        """Fetches the category_type of the most recently approved topic."""
+        with get_db_session() as db:
+            last_topic = db.query(Topic).filter(Topic.is_approved == True).order_by(Topic.id.desc()).first()
+            if last_topic and last_topic.category_type:
+                return last_topic.category_type
+            return "CURRENT_AFFAIRS" # Default if none found
+
+    def save_topic(self, session_id: str, topic_data: Any, score_data: Any, is_approved: bool, category_type: str = "CURRENT_AFFAIRS") -> str:
         """Saves a topic and its score. Returns the topic ID."""
         with get_db_session() as db:
             db_topic = Topic(
                 session_id=session_id,
+                category_type=category_type,
                 title=topic_data.title,
                 problem_definition=topic_data.problem_definition,
                 historical_comparison=topic_data.historical_comparison,

@@ -29,17 +29,28 @@ class ArticleCollector:
         logger.info(f"Initialized {len(loaded)} connectors: {[c.source_name for c in loaded]}")
         return loaded
 
-    def collect(self) -> Dict[str, Any]:
+    def collect(self, target_category: str = "CURRENT_AFFAIRS") -> Dict[str, Any]:
         """
-        Runs all enabled connectors and aggregates the results.
+        Runs enabled connectors based on the target category.
         Returns a dict containing the articles and metadata about the process.
         """
         all_articles: List[ArticleData] = []
         source_stats = []
 
-        logger.info("Starting Article Collection Phase...")
+        logger.info(f"Starting Article Collection Phase for category: {target_category}")
         
+        # Simple routing for our mock feeds: RSS -> Current Affairs, HackerNews -> History
+        active_connectors = []
         for connector in self.connectors:
+            if target_category == "CURRENT_AFFAIRS" and connector.source_name == "RSS":
+                active_connectors.append(connector)
+            elif target_category == "HISTORY" and connector.source_name == "HackerNews":
+                active_connectors.append(connector)
+                
+        if not active_connectors:
+            logger.warning(f"No active connectors matched the target category: {target_category}")
+
+        for connector in active_connectors:
             articles = connector.fetch_articles(self.max_articles)
             all_articles.extend(articles)
             

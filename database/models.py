@@ -53,6 +53,7 @@ class Topic(Base):
     
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(String(36), ForeignKey('research_sessions.id'))
+    category_type = Column(String(50), nullable=True) # CURRENT_AFFAIRS, HISTORY
     title = Column(String(500), nullable=False)
     problem_definition = Column(Text, nullable=True)
     historical_comparison = Column(Text, nullable=True)

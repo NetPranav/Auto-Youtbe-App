@@ -11,11 +11,11 @@ class TopicExtractor:
     def __init__(self, ai_provider: Any = None):
         self.ai = ai_provider
 
-    def extract(self, article: ArticleData) -> Optional[TopicCandidate]:
+    def extract(self, article: ArticleData, target_category: str = "CURRENT_AFFAIRS") -> Optional[TopicCandidate]:
         """
         Uses an LLM to extract a topic from the article.
         """
-        logger.debug(f"Extracting topic from: {article.title}")
+        logger.debug(f"Extracting topic from: {article.title} (Target Category: {target_category})")
         
         if self.ai:
             try:
@@ -26,6 +26,7 @@ class TopicExtractor:
                     prompt_data = yaml.safe_load(f)
                     
                 system_prompt = prompt_data.get("system_prompt", "")
+                system_prompt += f"\n\nCRITICAL: You are extracting data for a {target_category} documentary. Format the output to fit this domain perfectly."
                 user_prompt = prompt_data.get("user_prompt", "").format(
                     title=article.title,
                     summary=article.summary,

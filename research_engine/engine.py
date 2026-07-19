@@ -45,8 +45,12 @@ class ResearchEngine(BaseEngine):
         session_id = self.repo.create_session()
         
         try:
+            last_category = self.repo.get_last_approved_category()
+            target_category = "HISTORY" if last_category == "CURRENT_AFFAIRS" else "CURRENT_AFFAIRS"
+            logger.info(f"Target Category for this run: {target_category} (Alternated from {last_category})")
+            
             # 1. Collect
-            collection_result = self.collector.collect()
+            collection_result = self.collector.collect(target_category=target_category)
             self.repo.save_stats(session_id, collection_result["stats"])
             
             # 2. Normalize
@@ -59,7 +63,7 @@ class ResearchEngine(BaseEngine):
             
             for article in normalized:
                 # Extract
-                candidate = self.extractor.extract(article)
+                candidate = self.extractor.extract(article, target_category=target_category)
                 if not candidate:
                     continue
                     
@@ -71,7 +75,7 @@ class ResearchEngine(BaseEngine):
                 novelty = self.novelty_analyzer.analyze(candidate)
                 
                 # Rank
-                score = self.ranker.rank(candidate, novelty)
+                score = self.ranker.rank(candidate, novelty, target_category=target_category)
                 
                 # Add to ranked pool if confidence score meets the 9.0 threshold
                 if score.confidence_score >= 9.0:
@@ -90,7 +94,7 @@ class ResearchEngine(BaseEngine):
             approved_topic_id = None
             for ranked in ranked_topics:
                 is_approved = (best_topic and ranked.candidate.title == best_topic.candidate.title)
-                topic_id = self.repo.save_topic(session_id, ranked.candidate, ranked.score, is_approved)
+                topic_id = self.repo.save_topic(session_id, ranked.candidate, ranked.score, is_approved, category_type=target_category)
                 if is_approved:
                     approved_topic_id = topic_id
             

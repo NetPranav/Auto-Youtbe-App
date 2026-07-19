@@ -14,12 +14,12 @@ class TopicRanker:
             ai_provider = ProviderManager().get_llm_provider()
         self.ai = ai_provider
 
-    def rank(self, candidate: TopicCandidate, novelty_score: float) -> TopicScoreData:
+    def rank(self, candidate: TopicCandidate, novelty_score: float, target_category: str = "CURRENT_AFFAIRS") -> TopicScoreData:
         """
         Calculates the total score based on weights and heuristics.
         Returns a TopicScoreData object.
         """
-        logger.debug(f"Ranking topic: {candidate.title}")
+        logger.debug(f"Ranking topic: {candidate.title} for {target_category}")
         
         scores = {
             "evidence_strength": 9.5,
@@ -39,7 +39,8 @@ class TopicRanker:
                 "evidence_strength, source_reliability, historical_coverage, expert_consensus, "
                 "conflict_risk, educational_value, practical_relevance. Each value must be a float between 0 and 10.\n"
                 "CRITICAL INSTRUCTION: If the topic provides strong evidence and is completely neutral, you MUST score "
-                "the positive metrics 9.5 or higher, and conflict_risk 1.0 or lower."
+                "the positive metrics 9.5 or higher, and conflict_risk 1.0 or lower.\n"
+                f"NOTE: The target category is {target_category}. If it is HISTORY, do not aggressively penalize practical_solutions if they focus on historical resolutions."
             )
             
             prompt = (
