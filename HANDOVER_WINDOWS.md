@@ -1,9 +1,10 @@
 # Handover Document: Auto-Youtube Pipeline (Windows Migration)
 
 **To the AI Assistant resuming this project:**
-The user has just migrated this codebase from a MacBook to a Windows laptop (RTX 4060 8GB VRAM, 16GB RAM) to take advantage of CUDA acceleration. 
+The user has just migrated this entire codebase from a MacBook (Mac OS) to a Windows laptop. 
+**Why this migration happened:** The Mac lacked the dedicated GPU hardware required for heavy AI workloads. The new Windows machine is equipped with an **NVIDIA RTX 4060 (8GB VRAM) and 16GB RAM**. This hardware upgrade allows the project to utilize **CUDA acceleration** to run advanced local AI models natively and offline—most importantly, the highly realistic **Bark voice engine** which is far superior to standard API-based TTS like `edge_tts`.
 
-Please read this document carefully to understand the current state of the architecture, recent major changes, and the immediate next steps.
+Please read this document carefully to understand the current state of the architecture, recent major changes, and the exact steps you need to take next.
 
 ---
 
@@ -32,11 +33,21 @@ The engine now features **Stateful Category Alternation**.
 - Every time the `ResearchEngine` runs, it checks the database for the last approved topic's category. If the last topic was `CURRENT_AFFAIRS`, it will instruct the AI prompts and data collectors to specifically hunt for `HISTORY` (e.g., WW2, 1800-2000s masterminds), and vice versa. 
 - This guarantees the channel naturally toggles between high-tier historical documentaries and current investigative reports to match the photo editing aesthetic.
 
-## 5. Immediate Next Step: The Bark Voice Engine
-The user wants to replace the current `edge_tts` voice provider with **Bark** (by Suno) to generate highly realistic, emotional voiceovers natively offline.
-- Because the user now has an RTX 4060 with 8GB VRAM, Bark will run beautifully.
-- **Implementation requirement:** When you build the Bark provider (`providers/voice/bark.py`), you **MUST** enable `SUNO_OFFLOAD_CPU=True` (or the equivalent environment variable) so that the models swap seamlessly between the 8GB VRAM and 16GB System RAM to prevent out-of-memory errors.
-- **Dependencies:** You will need to help the user install PyTorch with CUDA support for Windows, along with the `suno-bark` library.
+## 5. Explicit Instructions for the New AI (What you must do next)
+Your immediate priority is to harness the new RTX 4060 GPU to upgrade the Voice Generation phase.
+
+**Step 1: Environment Setup**
+You must help the user set up a CUDA-enabled Python environment on their new Windows machine. Ensure they install PyTorch with CUDA support and the `suno-bark` library.
+
+**Step 2: Implement the Bark Provider**
+The user wants to replace the current `edge_tts` voice provider with **Bark** (by Suno) to generate highly realistic, emotional voiceovers natively offline without relying on paid APIs.
+- Create `providers/voice/bark.py`.
+- **CRITICAL Implementation requirement:** You **MUST** enable `SUNO_OFFLOAD_CPU=True` (or the equivalent environment variable) in the Bark implementation. The RTX 4060 has 8GB VRAM, but Bark can easily exceed this. This setting ensures the models swap seamlessly between the 8GB VRAM and 16GB System RAM to prevent out-of-memory crashes.
+
+**Step 3: Fix Video/Subtitle Output Quality**
+Once Bark is running successfully, the user has noted that they want you to "fix the output properly"—specifically referring to the final video output and subtitles which are not yet at the desired premium quality level. 
+
+---
 
 ---
 
