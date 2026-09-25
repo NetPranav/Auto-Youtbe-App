@@ -19,5 +19,5 @@ class DocsPipelineStage4:
             "status": "completed",
             "stage": self.stage,
             "processed_keys": list(payload.keys()),
-            "completion_pct": 75,
+            "completion_pct": 85,
         }
