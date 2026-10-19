@@ -17,6 +17,7 @@ openai>=1.14.0
 edge-tts>=6.1.9
 requests>=2.31.0
 imageio-ffmpeg>=0.4.9
+feedparser>=6.0.0
 
 # Publishing
 google-api-python-client>=2.118.0
@@ -26,3 +27,6 @@ google-auth-oauthlib>=1.2.0
 # Operations
 rich>=13.7.0
 schedule>=1.2.1
+
+# AI Models (Local)
+suno-bark>=0.1.0

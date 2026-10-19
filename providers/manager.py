@@ -63,7 +63,10 @@ class ProviderManager:
         """Always uses EdgeTTS (free, commercially safe for YouTube)."""
         if not self._voice_provider:
             provider_type = config.voice_provider.lower()
-            if provider_type == "edge_tts":
+            if provider_type == "bark":
+                from .voice.bark import BarkProvider
+                self._voice_provider = BarkProvider()
+            elif provider_type == "edge_tts":
                 from .voice.edge_tts import EdgeTTSProvider
                 self._voice_provider = EdgeTTSProvider()
             else:

@@ -94,19 +94,27 @@ class VideoRenderer:
             duration = max(clip.duration, 2.0)
             total_frames = int(duration * fps)
             
-            # Alternate Ken Burns effects for visual variety
-            if i % 4 == 0:
-                # Zoom in (center)
-                zoompan = f"z='min(zoom+0.001,1.3)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
-            elif i % 4 == 1:
-                # Pan left to right
-                zoompan = f"z='1.15':x='min(x+2,iw)':y='ih/2-(ih/zoom/2)'"
-            elif i % 4 == 2:
-                # Zoom out (center)
-                zoompan = f"z='if(eq(on,1),1.3,max(zoom-0.001,1.0))':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+            # Use the motion_type assigned by MotionEngine (falls back to zoom_in)
+            motion = getattr(clip, 'motion_type', 'zoom_in') or 'zoom_in'
+            intensity = getattr(clip, 'motion_intensity', 1.15) or 1.15
+            
+            # Convert motion_type to FFmpeg zoompan parameters
+            zoom_speed = (intensity - 1.0) / max(total_frames, 1)
+            
+            if motion == "zoom_in":
+                zoompan = f"z='min(zoom+{zoom_speed:.6f},{intensity})':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+            elif motion == "zoom_out":
+                zoompan = f"z='if(eq(on,1),{intensity},max(zoom-{zoom_speed:.6f},1.0))':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+            elif motion == "pan_right":
+                zoompan = f"z='{min(intensity, 1.15)}':x='min(x+2,iw)':y='ih/2-(ih/zoom/2)'"
+            elif motion == "pan_left":
+                zoompan = f"z='{min(intensity, 1.15)}':x='max(x-2,0)':y='ih/2-(ih/zoom/2)'"
+            elif motion == "static":
+                # No motion — hold still at 1.0x zoom, centred
+                zoompan = f"z='1.0':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
             else:
-                # Pan right to left
-                zoompan = f"z='1.15':x='max(x-2,0)':y='ih/2-(ih/zoom/2)'"
+                # Fallback: gentle zoom in
+                zoompan = f"z='min(zoom+0.001,1.15)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
             
             filter_str = (
                 f"scale=8000:-1,"
@@ -124,7 +132,7 @@ class VideoRenderer:
                 temp_path
             ]
             
-            logger.info(f"[VideoRenderer] Rendering scene {i+1}/{len(visual_clips)} with Ken Burns...")
+            logger.info(f"[VideoRenderer] Rendering scene {i+1}/{len(visual_clips)} ({motion})...")
             result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             if result.returncode != 0:
                 logger.error(f"[VideoRenderer] Failed to render scene {i+1}: {result.stderr[-200:]}")
@@ -197,22 +205,68 @@ class VideoRenderer:
                 if not final_video_no_audio:
                     return None
         
-        # Step 3: Mux audio and burn subtitles onto the merged video
-        if audio_clips or subtitle_clips:
+        # Step 3: Mux audio, BGM, and burn subtitles onto the merged video
+        bgm_clips = timeline.get_clips_by_type("AUDIO_BGM")
+        
+        if audio_clips or subtitle_clips or bgm_clips:
             cmd = [FFMPEG_EXE, "-y", "-i", final_video_no_audio]
+            
+            input_idx = 1  # [0] is the video
+            voice_idx = None
+            bgm_idx = None
             
             if audio_clips:
                 cmd.extend(["-i", audio_clips[0].asset_path])
+                voice_idx = input_idx
+                input_idx += 1
             
-            # Apply subtitles via drawtext if available
+            if bgm_clips and os.path.exists(bgm_clips[0].asset_path):
+                cmd.extend(["-i", bgm_clips[0].asset_path])
+                bgm_idx = input_idx
+                input_idx += 1
+            
+            # Build filter complex for audio mixing
+            filter_parts = []
+            
+            # Subtitle drawtext filter (video filter)
+            vf_str = None
             if subtitle_clips:
                 drawtext_filters = self._build_drawtext_filters(subtitle_clips[0].asset_path, timeline)
                 if drawtext_filters:
-                    cmd.extend(["-vf", drawtext_filters])
+                    vf_str = drawtext_filters
             
-            if audio_clips:
+            # Audio mixing filter
+            if voice_idx is not None and bgm_idx is not None:
+                # Mix voice + BGM with ducked volume
+                bgm_volume = getattr(bgm_clips[0], 'volume', 0.1) or 0.1
+                fade_in = getattr(bgm_clips[0], 'fade_in', 2.0) or 2.0
+                fade_out = getattr(bgm_clips[0], 'fade_out', 3.0) or 3.0
+                total_dur = timeline.total_duration
+                
+                af_parts = []
+                af_parts.append(f"[{voice_idx}:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=mono[voice];")
+                af_parts.append(
+                    f"[{bgm_idx}:a]volume={bgm_volume},"
+                    f"afade=t=in:st=0:d={fade_in},"
+                    f"afade=t=out:st={max(0, total_dur - fade_out)}:d={fade_out},"
+                    f"aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=mono[bgm];"
+                )
+                af_parts.append("[voice][bgm]amix=inputs=2:duration=shortest[aout]")
+                
+                filter_complex = "".join(af_parts)
+                if vf_str:
+                    cmd.extend(["-filter_complex", filter_complex, "-vf", vf_str])
+                else:
+                    cmd.extend(["-filter_complex", filter_complex])
+                cmd.extend(["-map", "0:v", "-map", "[aout]", "-c:v", "libx264", "-c:a", "aac", "-shortest"])
+                logger.info("[VideoRenderer] Mixing voice + BGM audio tracks...")
+            elif voice_idx is not None:
+                if vf_str:
+                    cmd.extend(["-vf", vf_str])
                 cmd.extend(["-c:v", "libx264", "-c:a", "aac", "-shortest"])
             else:
+                if vf_str:
+                    cmd.extend(["-vf", vf_str])
                 cmd.extend(["-c:v", "libx264"])
                 
             cmd.append(output_path)
@@ -278,17 +332,25 @@ class VideoRenderer:
                 
                 # Clean text
                 text = " ".join(lines[2:])
-                # Escape single quotes and colons for FFmpeg
-                text = text.replace("'", "\u2019").replace(":", "\\:")
+                # Wrap text to ~15 chars to guarantee it never overflows width at large font sizes
+                import textwrap
+                wrapped = textwrap.wrap(text, width=15)
+                # Join with literal \n (escaped for ffmpeg) or just standard newline depending on ffmpeg version.
+                # Actually, drawtext supports vertical spacing via \n only if we use text='line1\nline2'.
+                # We need to escape single quotes, colons, AND newlines for FFmpeg drawtext inline string.
+                escaped_text = "\\n".join(wrapped).replace("'", "\u2019").replace(":", "\\:")
                 
                 # Drawtext filter for this subtitle
                 res_w, res_h = timeline.resolution.split("x")
-                font_size = int(int(res_w) / 12)  # Dynamically scale font
+                # Scale font appropriately for vertical video
+                font_size = int(int(res_w) / 14)  # 77px for 1080p, safe width
                 
+                # Add a stylish solid yellow/white TikTok style text
                 f_str = (
-                    f"drawtext=text='{text}':fontcolor=white:fontsize={font_size}:"
-                    f"box=1:boxcolor=black@0.6:boxborderw=10:"
-                    f"x=(w-text_w)/2:y=h-(h/4):"
+                    f"drawtext=text='{escaped_text}':fontcolor=white:fontsize={font_size}:"
+                    f"box=1:boxcolor=black@0.7:boxborderw=20:" # Stylish background box
+                    f"borderw=3:bordercolor=black:"
+                    f"x=(w-text_w)/2:y=(h-text_h)/2+200:" # Centered vertically but pushed down slightly
                     f"enable='between(t,{start_sec},{end_sec})'"
                 )
                 filters.append(f_str)

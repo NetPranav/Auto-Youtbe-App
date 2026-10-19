@@ -42,14 +42,14 @@ class DuplicateDetector:
 
         # 2. Semantic check (expensive)
         # In a real app, self.ai.get_embedding(candidate.title + candidate.description)
-        # Mock embedding for demonstration
-        candidate_embedding = [0.1, 0.2, 0.3] 
-        
-        for past in past_topics:
-            if past.embedding:
-                score = self._cosine_similarity(candidate_embedding, past.embedding)
-                if score >= self.similarity_threshold:
-                    logger.info(f"Duplicate found (Semantic {score:.2f}): {candidate.title} ~= {past.title}")
-                    return True
+        # We temporarily disable the mock semantic check to prevent 100% false positive duplicates
+        # candidate_embedding = [0.1, 0.2, 0.3] 
+        # 
+        # for past in past_topics:
+        #     if past.embedding:
+        #         score = self._cosine_similarity(candidate_embedding, past.embedding)
+        #         if score >= self.similarity_threshold:
+        #             logger.info(f"Duplicate found (Semantic {score:.2f}): {candidate.title} ~= {past.title}")
+        #             return True
                     
         return False

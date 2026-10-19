@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     
     # Providers Default Settings
     image_provider: str = Field(default="nim", description="Provider for image generation (e.g. nim, dall-e)")
-    voice_provider: str = Field(default="edge_tts", description="Provider for voice generation (e.g. edge_tts, elevenlabs)")
+    voice_provider: str = Field(default="bark", description="Provider for voice generation (e.g. bark, edge_tts, elevenlabs)")
     stock_provider: str = Field(default="pexels", description="Provider for stock video/images")
     ai_text_provider: str = Field(default="nim", description="Provider for text LLM generation")
     

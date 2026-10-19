@@ -60,6 +60,7 @@ class ContentEngine(BaseEngine):
                 return None
             # Eagerly extract needed properties into a dict or build context here to avoid DetachedInstanceError
             context_doc = self.context_builder.build_context(topic)
+            topic_title = topic.title  # Cache title before session closes
         
         package_id = self.repo.create_package(topic_id)
         
@@ -122,8 +123,8 @@ class ContentEngine(BaseEngine):
             # Save final scores
             self.repo.update_script_scores(script_id, final_scores.fact_score, final_scores.retention_score, final_scores.script_quality_score)
             
-            # 6. Scene Planning
-            scenes = self.scene_planner.plan_scenes(current_script)
+            # 6. Scene Planning (smart chunking with topic context)
+            scenes = self.scene_planner.plan_scenes(current_script, topic_title=topic_title)
             self.repo.save_scenes(package_id, scenes)
             
             self.repo.complete_package(package_id, "FINALIZED")

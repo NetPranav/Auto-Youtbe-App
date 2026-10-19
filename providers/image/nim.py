@@ -68,11 +68,11 @@ class NimImageProvider(BaseImageProvider):
                 import urllib.parse
                 from common.retry_helpers import with_retry
                 
-                @with_retry(max_retries=3, delay=5, backoff=2)
+                @with_retry(max_retries=1, delay=1, backoff=1)
                 def _try_pollinations():
                     encoded_prompt = urllib.parse.quote(prompt)
                     fallback_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
-                    res = requests.get(fallback_url, timeout=30)
+                    res = requests.get(fallback_url, timeout=10)
                     res.raise_for_status()
                     return res.content
 

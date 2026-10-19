@@ -50,9 +50,14 @@ class AssetEngine(BaseEngine):
                 script = db.query(Script).filter(Script.package_id == content_package_id).first()
                 script_text = script.revisions[-1].text if script and script.revisions else "Default script text"
                 
+                # Extract genre to pass to voice engine
+                from database.models import Topic
+                topic = db.query(Topic).filter(Topic.id == c_pkg.topic_id).first()
+                genre = topic.category_type if topic and topic.category_type else "ROMANCE"
+                
                 # 1. Analyze & Plan inside session to avoid DetachedInstanceError
                 analyzed_scenes = self.analyzer.analyze(scenes)
-                plan = self.planner.plan_assets(analyzed_scenes, script_text)
+                plan = self.planner.plan_assets(analyzed_scenes, script_text, genre=genre)
             
             results = []
             image_request_count = 0
@@ -64,8 +69,8 @@ class AssetEngine(BaseEngine):
                     # Add delay between image requests to avoid API rate limits
                     if image_request_count > 0:
                         import time
-                        logger.info(f"[AssetEngine] Waiting 3s before next image request (rate limit protection)...")
-                        time.sleep(3)
+                        logger.info(f"[AssetEngine] Waiting 1s before next image request (rate limit protection)...")
+                        time.sleep(1)
                     
                     file_path = self.image_generator.generate(req.provider_type, req.parameters.get("prompt", ""), storage_dir)
                     image_request_count += 1
@@ -80,7 +85,8 @@ class AssetEngine(BaseEngine):
                 elif req.asset_type in ["FETCHED_IMAGE", "STOCK_VIDEO"]:
                     file_path = self.asset_fetcher.fetch(req.provider_type, req.parameters.get("query", ""), storage_dir)
                 elif req.asset_type == "VOICE":
-                    file_path = self.voice_generator.generate(req.provider_type, req.parameters.get("text", ""), storage_dir)
+                    genre = req.parameters.get("genre", "ROMANCE")
+                    file_path = self.voice_generator.generate(req.provider_type, req.parameters.get("text", ""), storage_dir, genre=genre)
                 elif req.asset_type == "SUBTITLE":
                     file_path = self.subtitle_generator.generate(req.parameters.get("text", ""), storage_dir)
                 

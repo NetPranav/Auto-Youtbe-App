@@ -38,9 +38,9 @@ class TopicRanker:
                 "factual foundation, and neutrality. Return ONLY a JSON object with keys: "
                 "evidence_strength, source_reliability, historical_coverage, expert_consensus, "
                 "conflict_risk, educational_value, practical_relevance. Each value must be a float between 0 and 10.\n"
-                "CRITICAL INSTRUCTION: If the topic provides strong evidence and is completely neutral, you MUST score "
-                "the positive metrics 9.5 or higher, and conflict_risk 1.0 or lower.\n"
-                f"NOTE: The target category is {target_category}. If it is HISTORY, do not aggressively penalize practical_solutions if they focus on historical resolutions."
+                "Be HONEST and CRITICAL. Only genuinely well-researched, evidence-backed topics should score above 8.\n"
+                "Topics with vague claims, missing evidence, or sensationalism should score below 6.\n"
+                f"NOTE: The target category is {target_category}. For HISTORY topics, evaluate historical depth and accuracy."
             )
             
             prompt = (

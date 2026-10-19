@@ -25,10 +25,7 @@ class ResearchEngine(BaseEngine):
         self.ai = ai_provider
         self.repo = ResearchRepository()
         
-        # Load sources from config
-        sources = [s.strip() for s in config.research_enabled_sources.split(',')]
-        
-        self.collector = ArticleCollector(sources, config.research_max_articles_per_source)
+        self.collector = ArticleCollector()
         self.normalizer = ArticleNormalizer()
         self.extractor = TopicExtractor(self.ai)
         self.duplicate_detector = DuplicateDetector(self.ai)
@@ -45,9 +42,10 @@ class ResearchEngine(BaseEngine):
         session_id = self.repo.create_session()
         
         try:
-            last_category = self.repo.get_last_approved_category()
-            target_category = "HISTORY" if last_category == "CURRENT_AFFAIRS" else "CURRENT_AFFAIRS"
-            logger.info(f"Target Category for this run: {target_category} (Alternated from {last_category})")
+            import random
+            genres = ["ROMANCE", "HORROR", "SPORTS", "COMEDY"]
+            target_category = random.choice(genres)
+            logger.info(f"Target Category for this run: {target_category}")
             
             # 1. Collect
             collection_result = self.collector.collect(target_category=target_category)
@@ -77,15 +75,15 @@ class ResearchEngine(BaseEngine):
                 # Rank
                 score = self.ranker.rank(candidate, novelty, target_category=target_category)
                 
-                # Add to ranked pool if confidence score meets the 9.0 threshold
-                if score.confidence_score >= 9.0:
+                # Add to ranked pool if confidence score meets the threshold
+                if score.confidence_score >= 6.5:
                     ranked_topics.append(RankedTopic(topic_id="", candidate=candidate, score=score))
                 else:
-                    logger.warning(f"Topic '{candidate.title}' rejected due to low confidence score ({score.confidence_score:.2f} < 9.0)")
+                    logger.warning(f"Topic '{candidate.title}' rejected due to low confidence score ({score.confidence_score:.2f} < 6.5)")
                 
             # 4. Select Best
             if not ranked_topics:
-                logger.error("No topics met the strict 9.0 confidence score threshold. Rejecting all.")
+                logger.error("No topics met the 6.5 confidence score threshold. Rejecting all.")
                 best_topic = None
             else:
                 best_topic = self.selector.select(ranked_topics)

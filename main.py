@@ -11,16 +11,25 @@ def main() -> None:
     logger.info("Starting Autonomous AI YouTube System...")
     
     try:
+        # Import models so Base.metadata is populated before create_all
+        import database.models
+        
         # 1. Initialize Database Schema (Creates SQLite file locally by default)
         init_db()
 
-        # 2. Instantiate Orchestrator (Dependency Injection happens here)
-        # For Phase 1, we pass None as engines have not been built yet.
+        # Import engines
+        from research_engine.engine import ResearchEngine
+        from content_engine.engine import ContentEngine
+        from asset_engine.engine import AssetEngine
+        from video_engine.engine import VideoEngine
+        from database.session import SessionLocal
+
+        # 2. Instantiate Orchestrator
         app = Orchestrator(
-            research_engine=None,
-            content_engine=None,
-            asset_engine=None,
-            video_engine=None,
+            research_engine=ResearchEngine(),
+            content_engine=ContentEngine(),
+            asset_engine=AssetEngine(),
+            video_engine=VideoEngine(db_session=SessionLocal()),
             publisher_engine=None,
             learning_engine=None
         )

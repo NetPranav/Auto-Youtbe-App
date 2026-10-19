@@ -2,6 +2,7 @@ from enum import Enum
 
 class TaskCategory(str, Enum):
     # Research Engine
+    RESEARCH_IDEA_GENERATION = "research_idea_generation"
     RESEARCH_TOPIC_EXTRACTION = "research_topic_extraction"
     RESEARCH_TOPIC_RANKING = "research_topic_ranking"
     RESEARCH_NOVELTY_ANALYSIS = "research_novelty_analysis"

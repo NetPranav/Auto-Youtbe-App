@@ -14,6 +14,7 @@ class ModelSelector:
     def _get_preferred_model_id(self, category: TaskCategory) -> Optional[str]:
         # Map TaskCategory to the config variables
         mapping = {
+            TaskCategory.RESEARCH_IDEA_GENERATION: config.research_model,
             TaskCategory.RESEARCH_NOVELTY_ANALYSIS: config.research_model,
             TaskCategory.RESEARCH_TOPIC_EXTRACTION: config.topic_extraction_model,
             TaskCategory.RESEARCH_TOPIC_RANKING: config.topic_ranking_model,

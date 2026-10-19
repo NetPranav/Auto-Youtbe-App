@@ -49,14 +49,14 @@ class TopicExtractor:
         try:
             # Fallback Mock AI behavior
             mock_json = {
-                "title": f"The hidden impact of {article.title}",
-                "problem_definition": "A major crisis unfolding unnoticed.",
-                "historical_comparison": "Things have gotten significantly worse over the last 10 years.",
-                "root_cause_analysis": "Systemic failures and outdated infrastructure.",
-                "supporting_evidence": "Data from multiple international organizations confirms a 30% drop in key metrics.",
-                "counterarguments": "Some claim it's a cyclical trend rather than a permanent decline.",
-                "global_comparison": "Countries like Singapore have implemented robust policies with success.",
-                "practical_solutions": "Immediate investment in modernizing infrastructure is required."
+                "title": f"The True Story of {article.title}",
+                "problem_definition": "An incredible true event that defies explanation.",
+                "historical_comparison": "This situation echoes legendary tales from the past.",
+                "root_cause_analysis": "The sequence of events was completely unpredictable.",
+                "supporting_evidence": "Eyewitness accounts and historical records confirm the details.",
+                "counterarguments": "Some remain skeptical, but the facts speak for themselves.",
+                "global_comparison": "Similar events have occurred worldwide, but rarely with such intensity.",
+                "practical_solutions": "This story leaves a lasting legacy we will never forget."
             }
             
             candidate = TopicCandidate(**mock_json)

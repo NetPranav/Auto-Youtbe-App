@@ -2,7 +2,6 @@
 Connectors and Collector Init
 """
 from .base import BaseConnector
-from .rss import RSSConnector
-from .hackernews import HackerNewsConnector
+from .lovestory import LoveStoryConnector
 
-__all__ = ["BaseConnector", "RSSConnector", "HackerNewsConnector"]
+__all__ = ["BaseConnector", "LoveStoryConnector"]

@@ -7,7 +7,7 @@ class AssetPlanner:
     """
     Creates an execution plan mapping abstract requirements to concrete providers.
     """
-    def plan_assets(self, analyzed_scenes: List[Dict[str, Any]], script_text: str) -> List[AssetRequest]:
+    def plan_assets(self, analyzed_scenes: List[Dict[str, Any]], script_text: str, genre: str = "ROMANCE") -> List[AssetRequest]:
         logger.info("Planning asset execution strategy...")
         
         requests: List[AssetRequest] = []
@@ -18,7 +18,7 @@ class AssetPlanner:
             scene_id="global",
             asset_type="VOICE",
             provider_type=config.voice_provider,
-            parameters={"text": script_text, "style": config.asset_voice_style}
+            parameters={"text": script_text, "style": config.asset_voice_style, "genre": genre}
         ))
         
         requests.append(AssetRequest(
